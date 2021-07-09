@@ -1,0 +1,151 @@
+{% load static %}
+
+
+
+<div class="container">
+    <div class="upcoming-booking card">
+        <h3 class="text-center">Upcoming Bookings</h3>
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#home">Information</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#menu1">Session Detail</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" style="border: 1px solid #ccc;">
+            <div id="home" class="container tab-pane active"><br>
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Course</th>
+                                    <th>Price</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="navbar-brand" href="#">
+                                            &nbsp;&nbsp;<img src="{% static 'img/default-user.png' %}" width="40"
+                                                height="40" class="d-inline-block align-top" alt="">
+                                            Student Name
+                                        </div>
+                                    </td>
+                                    {% if student_data %}
+                                    <td>John</td>
+                                    <td>Doe</td>
+                                    <td>john@example.com</td>
+                                    {% else %}
+                                    <td>
+                                        <div class="text-center">
+                                            <p>No Records to show</p>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger">Cancel</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Contact</button>
+                </div>
+            </div>
+            <div id="menu1" class="container tab-pane fade"><br>
+                <h3>Menu 1</h3>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.</p>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="past-booking card">
+        <h3 class="text-center">Past Bookings</h3>
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#home1">Information</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#menu2">Session Detail</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" style="border: 1px solid #ccc;">
+            <div id="home1" class="container tab-pane active"><br>
+                <div class="row">
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Course</th>
+                                        <th>Price</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="navbar-brand" href="#">
+                                                &nbsp;&nbsp;<img src="{% static 'img/default-user.png' %}" width="40"
+                                                    height="40" class="d-inline-block align-top" alt="">
+                                                Student Name
+                                            </div>
+                                        </td>
+                                        {% if student_data %}
+                                        <td>John</td>
+                                        <td>Doe</td>
+                                        <td>john@example.com</td>
+                                        {% else %}
+                                        <td>
+                                            <div class="text-center">
+                                                <p>No Records to show</p>
+                                            </div>
+                                        </td>
+                                        {% endif %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <div class="star-rating">
+                        <input type="radio" id="5-stars" name="rating" value="5" />
+                        <label for="5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="4-stars" name="rating" value="4" />
+                        <label for="4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="3-stars" name="rating" value="3" />
+                        <label for="3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="2-stars" name="rating" value="2" />
+                        <label for="2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="1-star" name="rating" value="1" />
+                        <label for="1-star" class="star">&#9733;</label>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Contact</button>
+                </div>
+            </div>
+            <div id="menu2" class="container tab-pane fade"><br>
+                <h3>Menu 1</h3>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.</p>
+            </div>
+        </div>
+    </div>
+</div>
+

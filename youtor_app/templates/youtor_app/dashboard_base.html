@@ -1,0 +1,49 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block title_block %}
+Dashboard
+{% endblock %}
+
+{% block include_static_cssblock1 %}
+{% endblock %}
+
+
+{% block navbar_section %}
+{% include "youtor_app/navbar.html" %}
+{% endblock %}
+
+
+
+{% block offer_tution %}
+{% include "youtor_app/offer_tution.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="row" id="body-row">
+    {% include "youtor_app/sidebar.html" %}
+
+    <div class="col pt-5">
+        {% block dashboard_main_content %}
+        <!-- dashboard's main content goes here -->
+        {% endblock %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block footer_section %}
+{% endblock %}
+
+
+{% block include_static_jsblock1 %}
+<script>
+    $(document).ready(function () {
+        $('#youtor-nav .navbar-nav a').on('click', function () {
+            $('#youtor-navr .navbar-nav').find('li .active').removeClass('active');
+            $(this).parent('li').addClass('active');
+        });
+</script>
+{% endblock %}

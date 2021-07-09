@@ -1,0 +1,237 @@
+
+
+.card-header-youtor {
+    background: linear-gradient(60deg, #ffb95e, #de830d);
+    border-radius: 3px;
+    margin-top: -20px;
+    padding: 15px;
+    box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+}
+
+.card-profile .card-avatar img {
+    width: 100%;
+    height: auto;
+    max-width: 130px;
+    max-height: 130px;
+}
+
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+
+.checked {
+  color: orange;
+}
+
+.cool-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+tr {
+  text-align: center;
+}
+
+th, td {
+    
+    padding: 10px;
+    font-size: 20px;
+    color: #de830d;
+}
+.with-bar {
+    border-right: 2px solid #de830d;
+}
+
+
+.card {
+    border: 0;
+    margin-bottom: 30px;
+    font-size: .875rem;
+    border-radius: 6px;
+    color: #333333;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #eeeeee;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+
+.card-description {
+    color: #de830d;
+    padding-top: 15px;
+    text-align: center;
+    font-size: 15px;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    color: #de830d;
+    font-size: 25px;
+}
+
+.stars{
+    font-size: 15px;
+    color: black;
+    text-align: left;
+    -webkit-text-stroke-width: 1.5px;
+    -webkit-text-stroke-color: black;
+    text-shadow: 0 0 2px #000;
+
+}
+
+.card-profile {
+    margin-top: 100px;
+    text-align: center;
+}
+
+
+.btn {
+    display: inline-block;
+    position: relative;
+    padding: 12px 30px;
+    margin: 0.3125rem 1px;
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1.428571;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0.2rem;
+    outline: 0;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: box-shadow, transform;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+}
+
+.btn,.btn:focus {
+    color: #fff;
+    background-color: #de830d;
+    border-color: #de830d;
+    box-shadow: 0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12);
+}
+
+.btn:hover,btn:active {
+    color: #fff;
+    background-color: #ffb95e;
+    border-color: #ffb95e;
+    box-shadow: 0 2px 2px 0 rgba(153, 153, 153, 0.14), 0 3px 1px -2px rgba(153, 153, 153, 0.2), 0 1px 5px 0 rgba(153, 153, 153, 0.12);
+}
+.btn.btn-round {
+    border-radius: 30px;
+}
+
+.small-text {
+    font-size: 13px;
+}
+
+.detailview-card {
+    min-width: 40%;
+}
+
+.detailview-profile {
+    float: left;
+}
+
+.detailview-margin {
+    margin-top: 0px;
+}
+
+.tutorname-detail {
+    padding-top: 0px;
+    text-align: left;
+    padding-left: 150px;
+}
+
+.tutorheader-detail {
+    padding-top: 15px;
+    text-align: right;
+    float: right;
+    font-size: 50px;
+}
+
+.tutorheader-detail-small {
+     padding-top: 40px;
+    text-align: right;
+    float: right;
+    font-size: 20px;
+}
+
+.tutorheader-detail-rating {
+    float: left;
+    padding-left: 50px;
+
+
+}
+
+.header-btn {
+    float: right;
+    margin-top: -40px;
+    margin-right: 15px;
+    border: 3px solid #ffb95e;
+    background-color: white;
+    font-size: 18px;
+    font-weight: 500;
+    color: #de830d;
+}
+
+
+.tag-detail {
+    text-align: center;
+}
+
+.card-maindetails {
+    position: relative;
+}
+
+.review-stars {
+    float: center;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.review-description {
+    padding-top: 10px;
+    padding-left: 75px;
+}   
+
+
+.subject-list {
+    text-align: center;
+    margin: auto;
+}
+
+.subject {
+    padding-bottom: 0px;
+    padding-top: 0px;
+    border-right: 2px solid #de830d;
+    border-left: 2px solid #de830d;
+}
+
+
+a, a:hover {
+    color: #de830d;
+}
+
+#special-about {
+    padding-left: 230px;
+}

@@ -1,0 +1,579 @@
+{% extends './dashboard_base.html' %}
+{% load static %}
+{% load youtor_utils %}
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" href="{% static 'assets/css/material-dashboard.css' %}" />
+<link href="{% static 'assets/demo/demo.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css">
+<link href="{% static 'css/bootstrap-table-expandable.css' %}" rel="stylesheet" />
+<style>
+    .searchbar {
+        margin-bottom: auto;
+        margin-top: auto;
+        height: 60px;
+        background-color: #fcfcfc;
+        border-radius: 30px;
+        padding: 10px;
+    }.navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+}
+	.navbar .collapse .navbar-nav .nav-item .nav-link {
+		font-size: 16px;
+		font-weight: 600;
+		color: #de830d;
+		padding: 4px 8px;
+		letter-spacing: 0.3px;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		text-transform: capitalize;
+	}
+
+	.navbar.fixed-top {
+		margin-bottom: 0;
+  }
+    .search_input {
+        color: rgb(0, 0, 0);
+        border: 0;
+        outline: 0;
+        background: none;
+        width: 97%;
+        line-height: 40px;
+        padding: 0 10px;
+        caret-color: red;
+    }
+
+    .modal-content .card.card-signup.card-plain.mt-0 {
+        margin-bottom: 0 !important;
+    }
+
+    .searchbar:hover>.search_icon {
+        background: white;
+        color: #e74c3c;
+    }
+
+    .ui-autocomplete {
+        z-index: 9999;
+    }
+
+    .modal .col-md-12,
+    .modal .col-md-8 {
+        margin-bottom: 15px;
+    }
+
+    .modal button.close {
+        right: 10px;
+        position: absolute;
+        top: 5px;
+        z-index: 999;
+    }
+    .errorClass{
+        border : 1px solid #de830d;
+        border-radius: 4px;
+    }
+
+    div#wait {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99;
+        background-color: rgba(255,255,255,.6) !important;
+    }
+
+    .modal.show .modal-dialog .modal-content {
+        position: relative;
+    }
+
+    div#wait img {
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    div#tutorProfileModal.wait #wait {
+        display: block !important;
+    }
+</style>
+
+
+{% endblock %}
+
+{% block dashboard_main_content %}
+
+
+<div class="content dashboard">
+    <div class="container-fluid">
+        <!-- Tutor Dashboard -->
+        {% if request.session.user_type == 'Tutor' %}
+            {% if tutor_offer == None %}
+                <div class="row container init-get-verify">
+                    <p>
+                        Get you profile verified now.
+                        <button class="btn" onclick="$('#tutorProfileModal').modal('show')">Verify Profile</button>
+                    </p>
+                </div>
+            {% elif tutor_offer.status == 1 %}
+                <div class="row container verified">
+                    <p>
+                        {% include "youtor_app/booking_1.html" %}
+                    </p>
+                </div>
+            {% elif tutor_offer.status == 0 %}
+                <div class="row container init-under-review">
+                    <p>
+                        Your Profile is under review, you will be notified once verification is complete.
+                    </p>
+                </div>
+            {% elif tutor_offer.status == 2 %}
+                <div class="row container init-rejected">
+                    <p>
+                        Your profile was rejected. Please contact Youtor Support if you have any query about profile rejection or you can try submitting your request again. 
+                    </p>
+                    <p>
+                        <button class="btn" onclick="$('#tutorProfileModal').modal('show')">Verify Profile</button>
+                    </p>
+                </div>
+            {% endif %}
+
+                <div class="for-tutor-profile-modal">
+                    <div id="tutorProfileModal" class="modal fade">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="card card-signup card-plain mt-0">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <div class="modal-body">
+                                        <div class="card-avatar text-center" style="min-height: 130px; min-width: 130px;">
+                                            <img id="user_image" class="img" width="130" height="130"
+                                                src="{% static 'img/default-user.png' %}" />
+                                        </div>
+                                        <h3 class="text-center">{{ user.first_name }} {{ user.last_name }}</h3>
+                                        <form id="tutorOfferProfile" class="offer-tution-form" enctype="multipart/form-data"
+                                            method="POST" action="javascript:void(0);">
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label class="bmd-label-floating">*Add Subjects</label>
+                                                            <div class="form-group subject-wrapper">
+                                                                <input name="subjects" type="text" class="form-control"
+                                                                    id="subjects"
+                                                                    placeholder="Enter subjects you want to teach" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label class="bmd-label-floating">*Bio</label>
+                                                                <textarea name="bio" cols="40" class="form-control"
+                                                                    id="id_bio"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label class="bmd-label-floating">Add tags</label>
+                                                                <input name="tags" type="text" class="form-control"
+                                                                    id="tagSearch" placeholder="Search and enter tags" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="user-profile-image form-group">
+                                                                <label class="bmd-label-floating">Upload your picture: </label>
+                                                                <input
+                                                                    onchange="document.getElementById('user_image').src = window.URL.createObjectURL(this.files[0])"
+                                                                    type="file" name="profile_image" accept="image/*"
+                                                                    class="form-control" id="id_profile_image">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="bmd-label-floating">*Rate: ($/30min)</label>
+                                                                <input type="number" name="rate" step="0.01"
+                                                                    class="form-control" id="id_rate">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label class="bmd-label-floating">*Upload your Transcript</label>
+                                                                <input type="file" name="transcript" class="form-control"
+                                                                    id="id_transcript">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12 text-center">
+                                                            <button id="rqstVerification" type="submit" class="btn btn-primary">Request Profile
+                                                                Verification
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="wait" style="display:none;">
+                                        <img src="{% static 'gif/ajax-loader.gif' %}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="for-profile-success">
+                    <div class="modal fade" id="requestSuccessModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Success!</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>You profile verification request as been successfully submitted.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- Student_Dashboard -->
+        {% elif request.session.user_type == 'Student' %}
+
+        <div class="container">
+            <div class="h-100">
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <div class="searchbar d-flex">
+                            <div class="col-md-9">
+                                <input class="search_input" type="text" name="tutorsearch" id="tutorsearch"
+                                    placeholder="Enter your search here...">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <select class="form-control" id='search_dropdown'>
+                                    <option selected value="name">Tutor Name</option>
+                                    <option value="subject">Subject</option>
+                                    <option value="tags">Tags</option>
+                                </select>
+                            </div>
+                            <a href="#" class="mt-2 ml-4 search_icon"><i class="fa fa-search"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="bmd-label-floating">Filter by Ratings :</label>
+                        <div class="dropdown show">
+                            <div>
+                                <select class="form-control" id='rating_dropdown' name="rating_dropdown">
+                                    <option selected value="">Rating</option>
+                                    <option value="5">5</option>
+                                    <option value="4">4 & Up</option>
+                                    <option value="3">3 & Up</option>
+                                    <option value="2">2 & Up</option>
+                                    <option value="1">1 & Up</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="bmd-label-floating">Price : </label>
+                        <div class="filter-price">
+                            <div id="slider-range" data-price-min="0" data-price-max="500"
+                            style="background-color: #de830d;"></div>
+                            <div class="min-value-price pull-left">
+                                <label  style="border:0; color:#f6931f; font-weight:bold;" id="amount1">${% for minval in min_val %} {{minval|floatformat:"-2"}}{% endfor %}</label>
+                            </div>
+                            <div class="max-value-price pull-right">
+                                <label  style="border:0; color:#f6931f; font-weight:bold;" id="amount2">${% for maxval in max_val %} {{maxval|floatformat:"-2"}}{% endfor %}</label>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-3">
+                        <label class="bmd-label-floating">Sort By:</label>
+                        <div class="dropdown show">
+                            <div>
+                                <select class="form-control" id='sort_dropdown' name="sort_dropdown">
+                                    <option value="">Select</option>
+                                    <option value="LTH">Price - Low to High</option>
+                                    <option value="HTL">Price - High to Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tutor-listing">
+        {% include "youtor_app/offer_list.html" %}
+    </div>
+    {% endif %}
+</div>
+</div>
+
+{% endblock %}
+
+
+{% block include_static_jsblock1 %}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+<script src="{% static "js/bootstrap-table-expandable.js" %}"></script>
+<script>
+    $(function () {
+
+        $(document).ajaxStart(function(){
+            $("#wait").css("display", "block");
+        });
+        $(document).ajaxComplete(function(){
+            $("#wait").css("display", "none");
+        });
+
+        $("#id_rate").attr({
+            "max" : 500,
+            "min" : 5
+        });
+        {% get_user_type request.user as user_type %}
+        // Open a modal to create tutor profile if there are not any offers by tutor
+        {% if user_type == 'Tutor' %}
+            {% if tutor_offer == None %}
+                $("#tutorProfileModal").modal('show');
+            {% endif %}
+        {% endif %}
+
+        // #####################################################
+        // for student dashboard search feature
+        $('#tutorsearch').keyup(function () {
+            var query;
+            query = $(this).val()
+            search_by =  $("#search_dropdown").val();
+            $.get('youtor_app/tutor_search/', { suggestion: query,search_by:search_by }, function (data) {
+                console.log('search result', data);
+                $('.tutor-listing').html(data);
+            });
+        });
+        // -----------------------------------------------------
+
+        // ######################################################
+        // handle for tutor intial tutor profile form
+        $("#tutorOfferProfile").submit(function (event) {
+            $('div#tutorProfileModal').addClass("wait");
+            var sub_value = $('#subjects').val();
+            var rate_value = $('#id_rate').val();
+            var bio_value = $('#id_bio').val();
+            var transcript_value = $('#id_transcript').val();
+
+            if (sub_value==="") {
+                $(".subject-wrapper").addClass('errorClass')
+                event.preventDefault();
+            }
+            if (rate_value==="") {
+                $("#id_rate").addClass('errorClass')
+                event.preventDefault();
+            }
+
+            if (!bio_value) {
+                $("#id_bio").addClass('errorClass')
+                event.preventDefault();
+            }
+
+            if (transcript_value==="") {
+                $("#id_transcript").addClass('errorClass')
+                event.preventDefault();
+            }
+            
+            if(sub_value && rate_value && bio_value && transcript_value) {
+                var formData = new FormData(this);
+                $('#rqstVerification').attr("disabled", true);
+                $.ajax({
+                    headers: { 'X-CSRFToken': '{{csrf_token}}' },
+                    url: "{% url 'create_tutor_profile' %}",
+                    method: 'POST',
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    data: formData,
+                    success: function (data) {
+                        if (data.status == 200) {
+                            $(".init-get-verify").html('<p>Your Profile is under review, you will be notified once verification is complete.</p>')
+                            $("#tutorProfileModal").modal('hide');
+                            $('#tutorOfferProfile')[0].reset();
+                            $("#requestSuccessModal").modal('show');
+                        }
+                    }
+                });
+            }
+            
+            $('div#tutorProfileModal').removeClass("wait");
+
+        });
+
+        $('#subjects').on('change', function() {
+            $(".subject-wrapper").removeClass('errorClass')
+        })
+
+        $('#id_rate').on('change', function() {
+            $("#id_rate").removeClass('errorClass')
+        })
+
+        $('#id_bio').on('change', function() {
+            $("#id_bio").removeClass('errorClass')
+        })
+
+        $('#id_transcript').on('change', function() {
+            $("#id_transcript").removeClass('errorClass')
+        })
+        // -----------------------------------------------------
+
+        $(".sdm1").addClass('active');
+
+        // ######################################################
+        // For tags input and suggestion
+        var tagSourceDataObj = [];
+
+        {% for tag in available_tags %}
+            tagSourceDataObj.push({ id: '{{ tag.id }}', value: '{{ tag.name }}' });
+        {% endfor %}
+
+        $("#tagSearch").tokenfield({
+            autocomplete: {
+                source: tagSourceDataObj,
+                delay: 100
+            },
+            showAutocompleteOnFocus: true
+        });
+
+        $("#tagSearch").on("tokenfield:createtoken", function (event) {
+            var existingTokens = $(this).tokenfield("getTokens");
+            var exists = true;
+
+            //PREVENT DUPLICATION
+            $.each(existingTokens, function (index, token) {
+                if (token.value === event.attrs.value) event.preventDefault();
+            });
+
+            //ALLOW ONLY TOKENS FROM SOURCE
+            $.each(tagSourceDataObj, function (index, token) {
+                if (token.value !== event.attrs.value) exists = false;
+            });
+            if (exists === true) event.preventDefault();
+        });
+        // -----------------------------------------------------
+
+
+        // ######################################################
+        // For subject input and suggestion
+        var subjectSourceDataObj = [];
+
+        {% for sub in all_subjects %}
+            subjectSourceDataObj.push({ id: '{{ sub.id }}', value: '{{ sub.subject_name }}' });
+        {% endfor %}
+
+        $("#subjects").tokenfield({
+            autocomplete: {
+                source: subjectSourceDataObj,
+                delay: 100
+            },
+            showAutocompleteOnFocus: true
+        });
+
+        $("#subjects").on("tokenfield:createtoken", function (event) {
+            var existingTokens = $(this).tokenfield("getTokens");
+            var exists = true;
+
+            //PREVENT DUPLICATION
+            $.each(existingTokens, function (index, token) {
+                if (token.value === event.attrs.value) event.preventDefault();
+            });
+
+            //ALLOW ONLY TOKENS FROM SOURCE
+            $.each(subjectSourceDataObj, function (index, token) {
+                if (token.value === event.attrs.value) exists = false;
+            });
+            if (exists === true) event.preventDefault();
+        });
+        // -----------------------------------------------------
+
+    });
+</script>
+
+<!-- SLIDER SCRIPT -->
+<script>
+    $(function () {
+
+        var minPriceInRupees = {% for minval in min_val %} {{ minval|floatformat:"-2"}}{% endfor %};
+        var maxPriceInRupees = {% for maxval in max_val %} {{maxval|floatformat:"-2"}}{% endfor %};
+        var currentMinValue = {% for minval in min_val %} {{ minval|floatformat:"-2"}}{% endfor %};;
+        var currentMaxValue = {% for maxval in max_val %} {{maxval|floatformat:"-2"}}{% endfor %};
+        $("#slider-range").slider({
+            range: true,
+            min: minPriceInRupees,
+            max: maxPriceInRupees,
+            values: [currentMinValue, currentMaxValue],
+            slide: function (event, ui) {
+                $("#amount1").text("$" + ui.values[0]);
+                $("#amount2").text("$" + ui.values[1]);
+                currentMinValue = ui.values[0];
+                currentMaxValue = ui.values[1];
+            },
+            stop: function (event, ui) {
+                currentMinValue = ui.values[0];
+                currentMaxValue = ui.values[1];
+                $.get('youtor_app/tutor_search_result_price/', { minv: currentMinValue, maxv: currentMaxValue }, function (data) {
+                    $('.tutor-listing').html(data);
+                });
+            }
+        });
+    });
+
+    $("#amount1,#amount2").change(function (e) {
+        var amount1 = $("#amount1").val()
+        var amount2 = $("#amount2").val()
+        if (amount1) {
+            $.get('youtor_app/tutor_search_result_price/', { minv: amount1, maxv: amount2 }, function (data) {
+                console.log('search result', data);
+                $('.tutor-listing').html(data);
+            });
+        }
+        var $this = $(this);
+        $("#slider-range").slider("values", $this.data("index"), $this.val());
+    });
+
+</script>
+
+<!-- RATING SCRIPT -->
+<script>
+$('#rating_dropdown').change(function() {
+    var rating_val = $(this).val(); 
+    $.get('search-rating/', { rating_val: rating_val }, function (data) 
+    {
+        $('.tutor-listing').html(data);
+    });
+})
+</script>
+
+<!-- RATING SCRIPT -->
+<script>
+    $('#sort_dropdown').change(function () {
+        var price_range_val = $(this).val();
+        $.get('sort/', { price_range_val: price_range_val }, function (data) {
+             $('.tutor-listing').html(data);
+        });
+    })
+</script>
+        
+{% endblock %}

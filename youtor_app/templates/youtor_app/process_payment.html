@@ -1,0 +1,98 @@
+{% extends './dashboard_base.html' %}
+
+{% block title_block %}
+Booking verification
+{% endblock %}
+
+{% block include_static_cssblock1 %}
+{% endblock %}
+
+
+{% block navbar_section %}
+{% include "youtor_app/navbar.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="card text-center booking-card">
+    <div class="card-body pt-5">
+    <h4 class="card-title mb-2">Tution Booking Details</h4>
+    <div class="container pull-center" style="max-width: 70%;">
+        <div class="p-2">
+            <h5 class="card-text">
+                Tutor Name: {{ slot_details.user.first_name }} {{ slot_details.user.last_name }}
+            </h5>
+        </div>
+        {% for slot in all_slots %}
+        <table class="table p-2">
+            <thead>
+                <th colspan="2">Session {{forloop.counter}}</th>
+            </thead>
+            <tr>
+                <td>
+                    <p class="card-text">Date: </p>
+                </td>
+                <td class="text-right">{{ slot.session_date }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="card-text">Time: </p>
+                </td>
+                <td class="text-right">{{ slot.session_timings }}</td>
+            </tr>
+            <tr class="pb-5">
+                <td>
+                    <p class="card-text">Session Duration: </p>
+                </td>
+                <td class="text-right">{{ slot.session_duration }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="card-text">Session Rate: </p>
+                </td>
+                <td class="text-right">$ {{slot.session_rate}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+        <table class="table table-success mt-2 font-weight-bold">
+            <tr>
+                <td>
+                    <p class="card-text">Tutor's rate per 30min: </p>
+                </td>
+                <td class="text-right">$ {{slot_details.rate}}</td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="card-text">Total Amount: </p>
+                </td>
+                <td class="text-right">$ {{ total_rate }}</td>
+            </tr>
+        <table>
+    </div>
+
+        <!-- <h5 class="card-title">Tution Booking Details</h5>
+        <p class="card-text">Tutor Name: {{ slot_details.user.first_name }} {{ slot_details.user.last_name }}</p>
+        <p class="card-text">Date: {{ slot_timings.start_time.date }}</p>
+        <p class="card-text">Time: {{ slot_timings.start_time|time:'H:i' }} to {{ slot_timings.end_time|time:'H:i' }}</p>
+        <p class="card-text">Tutor's rate per 30min: $ {{slot_details.rate}}</p>
+        <p class="card-text">Session Duration: {{ total_duration }}</p>
+        <p class="card-text">Total Amount: $ {{ total_rate }}</p> -->
+        <form action="{% url 'charge' %}" method="post">
+            {% csrf_token %}
+            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                data-key="{{ key }}"
+                data-description="Tution Slot Booking"
+                data-amount="{{request.session.to_pay}}"
+                data-locale="auto">
+            </script>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_section %}
+{% endblock %}
+
+
+{% block include_static_jsblock1 %}
+{% endblock %}

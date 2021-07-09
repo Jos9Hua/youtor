@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+
+    <title>
+        {% block title_block %}
+            Youtor Tutoring
+        {% endblock %}
+    </title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="{% static "img/youtor_logo.png" %}" type="image/png">
+    <link rel="icon" type="image/png" href="{% static "assets/img/favicon.png" %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static "assets/img/apple-icon.png" %}">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+
+    
+
+    {% block include_static_cssblock %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/linericon/style.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/nice-select/css/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/animate-css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/flaticon/flaticon.css' %}">
+    {% endblock %}
+    {% block include_static_cssblock1 %}
+    {% endblock %}
+</head>
+
+
+<body>
+    {% block navbar_section %}
+    {% endblock %}
+
+    {% block sidebar_section %}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+   
+    {% block footer_section %}
+        <!--================Footer Area =================-->
+        <footer class="footer_area">
+            <div class="container">
+                <div class="row footer_inner">
+                        <div class="col-lg-4">
+                            <aside class="f_widget ab_widget">
+                                <div class="f_title">
+                                    <h3><a href="#" target="" style="color: #fff">About YOUTOR</a></h3>
+                                </div>
+                                <p>Youtor is designed to provide an easy and convenient solution for university students to find and meet reliable tutors at affordable costs.</p>
+                            </aside>
+                        </div>
+                    <div class="col-lg-4">
+                        <aside class="f_widget ab_widget">
+                            <div class="f_title">
+                                <h3><a href="#" target="" style="color: #fff">Quick Links</a></h3>
+                            </div>
+                            <ul class="sdnjquicklinks">
+                                <li><a href="{% url 'index' %}">Home</a></li>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'register' %}">Register</a></li>
+                            </ul>
+                        </aside>
+                    </div>
+                    <div class="col-lg-4">
+                        <aside class="f_widget social_widget sk_ft_social">
+                            <div class="f_title">
+                                <h3>Follow Us</h3>
+                            </div>
+                            <p>Like, Follow & Share!</p>
+                            <ul class="list">
+                                <li><a href="#"><i class="fa fa-facebook fa-3x"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter fa-3x"></i></a></li>
+                                <li><a href="#"><i class="fa fa-instagram fa-3x"></i></a></li>
+                            </ul>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 footer-copyright">
+                    <p>Copyright &copy <script>document.write(new Date().getFullYear());</script> YOUTOR. All rights reserved.
+                    </p>
+            </div>
+        </footer>
+        <!--================End Footer Area =================-->
+    {% endblock %}
+
+    {% block include_static_jsblock %}
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+        <script src="{% static "js/popper.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+        <script src="{% static "js/stellar.js" %}"></script>
+        <script src="{% static "js/jquery.magnific-popup.min.js" %}"></script>
+        <script src="{% static "vendors/nice-select/js/jquery.nice-select.min.js" %}"></script>
+        <script src="{% static "vendors/owl-carousel/owl.carousel.min.js" %}"></script>
+        <script src="{% static "js/jquery.ajaxchimp.min.js" %}"></script>
+        <script src="{% static "vendors/counter-up/jquery.waypoints.min.js" %}"></script>
+        <script src="{% static "vendors/counter-up/jquery.counterup.min.js" %}"></script>
+        <script src="{% static "js/mail-script.js" %}"></script>
+        <script src="{% static "js/theme.js" %}"></script>
+        <script src="{% static "js/custom.js" %}"></script>
+        <script src="{% static 'js/sidebar.js' %}"></script>
+    {% endblock %}
+    
+    {% block include_static_jsblock1 %}
+<script>
+    $(document).ready(function () {
+        console.log('onPageLoad')
+        // console.log({{user_type}});
+        // {% if user_type == 'Tutor' %}
+        // {% if tutor_offers %}
+        $("#tutorProfileModal").modal('show');
+        
+        // {% endif %}
+        // {% endif %}
+    });
+</script>
+    {% endblock %}

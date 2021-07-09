@@ -1,0 +1,306 @@
+{% extends './dashboard_base.html' %}
+{% load static %}
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" href="{% static 'assets/css/material-dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/core/main.min.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/daygrid/main.min.css' %}" />
+<link rel="stylesheet" href="{% static 'vendors/timegrid/main.min.css' %}" />
+{% endblock %}
+{% block dashboard_main_content %}
+
+<div class="content dashboard">
+    <div class="container-fluid slot-schedule">
+        {% if tutor_offer.status == 1 %}
+            <div id='calendar-container'>
+                <div id='calendar'></div>
+            </div>
+        {% elif tutor_offer.status != 1 %}
+            <div>
+                <p>
+                    You profile is not verified yet. Your profile must be verified before you can start scheduling your tution sessions.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block include_static_jsblock1 %}
+<script src="{% static 'vendors/core/main.min.js' %}"></script>
+<script src="{% static 'vendors/interaction/main.min.js' %}"></script>
+<script src="{% static 'vendors/daygrid/main.min.js' %}"></script>
+<script src="{% static 'vendors/timegrid/main.min.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/moment-timezone-data.min.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% if tutor_offer.status == 1 %}
+
+            var Calendar = FullCalendar.Calendar;
+            var Draggable = FullCalendarInteraction.Draggable;
+
+            var calendarEl = document.getElementById('calendar');
+
+            // initialize the calendar
+            // -----------------------------------------------------------------
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek' // ,timeGridDay'
+                },  
+                timeZone: 'UTC',
+                minTime: "7:00:00",
+                maxTime: "24:00:00",
+                defaultView: 'timeGridWeek',
+                views: {
+                    month: {
+                        editable: false,
+                        selectable: false,
+                        droppable: false,
+                        eventOverlap: false,
+                    },
+                    week: {
+                        editable: true,
+                        selectable: true,
+                        droppable: true,
+                        eventOverlap: false,
+                    }
+                },
+                slotEventOverlap: false,
+                events: setSlotList(),
+                eventColor: '#4390eb',
+                timeFormat: 'H(:mm)t',
+                selectOverlap: function(eventObj) {
+                    return false;
+                },
+                select: function (eventObj) {
+                    var check = eventObj.start;
+                    var today = new Date();
+
+                    cYr = check.getFullYear();
+                    cMnth = check.getMonth();
+                    cDay = check.getDate();
+                    cHr = check.getHours();
+                    cMin = check.getMinutes();
+                    cSec = check.getSeconds();
+                    cOffset = check.getTimezoneOffset();
+                    cMin = cMin+cOffset
+                    check_UTC = Date.UTC(cYr, cMnth, cDay, cHr, cMin, cSec)
+
+                    tYr = today.getFullYear();
+                    tMnth = today.getMonth();
+                    tDay = today.getDate();
+                    tHr = today.getHours();
+                    tMin = today.getMinutes();
+                    tSec = today.getSeconds();
+                    // tOffset = today.getTimezoneOffset();
+                    today_UTC = Date.UTC(tYr, tMnth, tDay, tHr, tMin, tSec)
+
+                    // console.log("check:", check_UTC, "today: ", today_UTC, "toffset: ", tOffset)
+                    if(check_UTC >= today_UTC) {                        
+                        render_new_event(eventObj);
+                        calendar.unselect()
+                    }
+                },
+                /* This constrains it to today or later */
+                eventConstraint: {
+                    start: moment().format('YYYY-MM-DD'),
+                    end: '2100-01-01' // hard coded goodness unfortunately
+                },
+                eventResize: function (eventObj) {
+                    update_event(eventObj);
+                },
+                eventDrop: function (info) {
+                    if (confirm("Are you sure about this change?")) {
+                        update_event(info)
+                    } else {
+                        info.revert();
+                    }
+                },
+                eventRender: function(eventObj) {
+                    console.log("to be rendered:", eventObj);
+                    if (eventObj.event.groupId !== 'alreadyBooked') {
+                        eventObj.event.overlap = false;
+                        eventObj.event.rendering = "";
+                        var event_element = $(eventObj.el);
+                        event_element.find(".fc-bg").css("pointer-events","none");
+                        event_element.append("<div style='position:absolute;bottom:0px;right:0px' ><button type='button' style='padding:1px;' id='btnDeleteEvent' class='btn btn-light'>X</button></div>" );
+                        event_element.find("#btnDeleteEvent").click(function() {
+                            if (confirm("Are you sure you want to delete this session?")) {
+                                // API call to delete existing slots
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{% url 'delete_slots' %}",
+                                    data: {
+                                        'offer_id': eventObj.event.extendedProps.offerId,
+                                        'slot_id': eventObj.event.id,
+                                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                                    },
+                                    success: function (data, textStatus) {
+                                        console.log(data)
+                                        eventObj.event.remove()
+                                    },
+                                    error: function (xhr, data) {
+                                    }
+                                });
+                            }
+                        });
+                    }
+                },
+                
+            });
+            calendar.render();
+
+            function overLappingCheck(newEvent) {
+                console.log("OverLap CHECK",newEvent.start.getUTCDate());
+                var all_events = calendar.getEvents()
+
+                for(let i=0; i < all_events.length; i++) {
+                    var new_event_start = newEvent.start
+                    var new_event_end = newEvent.end
+
+                    if (all_events[i].start.getDate() == new_event_start.getDate()) {
+                        console.log("Same date")
+                        if (all_events[i].start.getDay() == new_event_start.getDay()) {
+                            console.log("Also same Day of the week")
+                            console.log("---------------------")
+                            console.log("TIme:", (all_events[i].start.getTime()) < (all_events[i].end.getTime()))
+                            if (all_events[i].start.getDay() == new_event_start.getDay()) {
+                                console.log("Check for same hours")
+
+                                var check1 = (newEvent.start) > (all_events[i].start)
+                                var check2 = (newEvent.start) < (all_events[i].start)
+                                var check3 = (newEvent.end) < (all_events[i].end)
+                                var check4 = (newEvent.end) > (all_events[i].end)
+                                console.log(check1, check2, check3, check4);
+
+                                if (check1 && check2) {
+                                    alert("Not Allowed!")
+                                    newEvent.revert()
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            function render_new_event(info) {
+                console.log("event to be created", info);
+                $.ajax({
+                        type: 'POST',
+                        url: "{% url 'create_slot' %}",
+                        data: {
+                            'created': true,
+                            'start_time': info.start.toUTCString(),
+                            'end_time': info.end.toUTCString(),
+                            'day_of_week': info.start.getDay(),
+                            'offer_id': {{ tutor_offer.id }},
+                            // 'slot_id': info.id,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function (data) {
+                            console.log("--------->>>>",data);
+                            calendar.addEvent({
+                                id: data.new_slot.id,
+                                title: 'New Slot',
+                                start: data.new_slot.start_time.replace('Z', ''),
+                                end: data.new_slot.end_time.replace('Z', ''),
+                                offerId: {{ tutor_offer.id }},
+                                allDay: false,
+                            })
+                        },
+                        error: function (xhr, status, e) {
+                            alert(status, e);
+                        }
+                    });            
+            }
+
+            function update_event(info) {
+                console.log("to be updated",info)
+                // API call to update existing slots
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'create_slot' %}",
+                    data: {
+                        'created': false,
+                        'start_time': info.event.start.toUTCString(),
+                        'end_time': info.event.end.toUTCString(),
+                        'day_of_week': info.event.start.getDay(),
+                        'offer_id': info.event.extendedProps.offerId,
+                        'slot_id': info.event.id,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data, textStatus) {
+                        // alert("Event slot updated successfully!!");
+                    },
+                    error: function (xhr, status, e) {
+                        // alert(status, e);
+                    }
+                });
+            }
+
+            function setSlotList() {
+                events = []
+                {% for slot in offer_slot_list %}
+                    events.push(
+                        {
+                            id: {{ slot.id }},
+                            title: "Session " + "{{ forloop.counter }}",
+                            start: "{{ slot.start_time }}",
+                            end: "{{ slot.end_time }}",
+                            offerId: {{ tutor_offer.id }},
+                            // rendering: 'background',
+                        }
+                    );
+                {% endfor %}
+
+                {% for slot in booked_slots %}
+                    events.push({
+                        id: {{ slot.id }},
+                        groupId: 'alreadyBooked',
+                        title: "Booked",
+                        start: "{{ slot.start_time }}",
+                        end: "{{ slot.end_time }}",
+                        // rendering: 'background',
+                        backgroundColor: '#ff0000',
+                        editable: false,
+                    });
+                {% endfor %}
+                
+                return events
+            }
+        {% endif %}
+
+        $(".sdm2").addClass('active');
+});
+</script>
+<style>
+    .container-fluid.slot-schedule {
+        background: #fff;
+    }
+
+.navbar .collapse .navbar-nav .nav-item .nav-link {
+    font-size: 16px;
+    font-weight: 600;
+    color: #de830d;
+    padding: 4px 8px;
+    letter-spacing: 0.3px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    text-transform: capitalize;
+}
+
+.navbar.fixed-top {
+    margin-bottom: 0;
+}
+.navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+}
+    </style>
+{% endblock %}

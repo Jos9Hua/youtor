@@ -1,0 +1,218 @@
+{% load static %}
+{% load youtor_utils %}
+
+<link href="{% static 'css/offer-listing.css' %}" rel="stylesheet" />
+
+<style>.with-bar {border-right: 2px solid #eee;}.card-profile .card-avatar+.card-body { margin-top: 40px; }</style>
+
+<style>
+    @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+    
+    fieldset, label { margin: 0; padding: 0; }
+    
+    h1 { font-size: 1.5em; margin: 0px; }
+    
+    /****** Style Star Rating Widget *****/
+    
+    .rating { 
+        border: none;
+        float:left ;
+    }
+    
+    .rating > input { display: none; } 
+    .rating > label:before { 
+        margin: 4px;
+        font-size: 1.25em;
+        font-family: FontAwesome;
+        display: inline-block;
+        content: "\f005";
+    }
+    
+    .rating > .half:before { 
+        content: "\f089";
+        position: absolute;
+    }
+    
+    .rating > label { 
+        color: #ddd; 
+        float: right; 
+    }
+    
+    /***** CSS Magic to Highlight Stars on Hover *****/
+    
+    .rating > input:checked ~ label, /* show gold star when clicked */
+    .rating:not(:checked) > label:hover, /* hover current star */
+    .rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
+    
+    .rating > input:checked + label:hover, /* hover current star when changing rating */
+    .rating > input:checked ~ label:hover,
+    .rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+    .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
+</style>
+        
+<div class="row" id="mysearch">
+    {% if all_offers %}
+        {% for offer in all_offers %}
+        {% get_profile offer as tutor_details %}
+        <div class="col-md-4">
+            <div class="card card-profile">
+                <div class="card-avatar" style="min-height: 130px; min-width: 130px;">
+                    <a href="">
+                        {% if tutor_details.profile_img %}
+                            <a  href="{% url 'tutor_detailed_view' slug=tutor_details.slug %}"><img class="img" src="{{ tutor_details.profile_img.url }}" /></a>
+                        {% else %}
+                        <a  href="{% url 'tutor_detailed_view' slug=tutor_details.slug %}"><img class="img" src="{% static 'img/default-user.png' %}" /></a>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'tutor_detailed_view' slug=tutor_details.slug %}"><h4 class="card-title" id="name">{{ tutor_details.name }}</h4></a>
+                    <div class="card-description">
+                        <p class="tutor-bio bio-short">{{ offer.bio }}</p>
+                        <!-- <span class="bio-toggle-btn">Show more...</span> -->
+                        <p>Major: {{ tutor_details.major }}</p>
+                        <table class="cool-table">
+                            <tr>
+                                <td class="with-bar text-center"> ${{ offer.rate }}</td>
+                                <td class="text-center">
+                                    <form method="POST" action="{% url 'TutorRate' %}">
+                                        {% csrf_token %}
+                                        <div class="rating" id="{{tutor_details.id}}">
+                                            <td class="stars text-center">
+                                                <!-- <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span>
+                                                <span class="fa fa-star"></span> -->
+                                                {% for avg in average %}
+                                                    <!-- {{ avg }} -->
+                                                    {% if tutor_details.id == avg.0 %}
+                                                        {% if avg.1|floatformat  >= '5.0' %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            
+                                                        {% elif avg.1|floatformat  >= '4.5' and avg.1|floatformat < '5.0'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+
+                                                        {% elif avg.1|floatformat  >= '4.0' and avg.1|floatformat < '4.5'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+
+                                                        {% elif avg.1|floatformat  >= '3.5' and avg.1|floatformat < '4.0'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '3.0' and avg.1|floatformat < '3.5'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '2.5' and avg.1|floatformat < '3.0'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '2' and avg.1|floatformat < '2.5'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '1.5' and avg.1|floatformat < '2.0'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '1' and avg.1|floatformat < '1.5'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+                                                        
+                                                        {% elif avg.1|floatformat  >= '0.5' and avg.1|floatformat < '1.0'  %}
+                                                
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-o"></span>
+                                                            <span class="fa fa-star-half-empty"></span>
+
+                                                        {% else %}
+                                                            <span class="fa fa-star-empty"></span>
+                                                            <span class="fa fa-star-empty"></span>
+                                                            <span class="fa fa-star-empty"></span>
+                                                            <span class="fa fa-star-empty"></span>
+                                                            <span class="fa fa-star-empty"></span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                        <br>
+                    </div>
+                    <a href="{% url 'tutor_detailed_view' slug=tutor_details.slug %}" class="btn btn-round tutor">Book NOW</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <span class="text-center">
+        There are currently no matching tutors.
+    </span>
+    {% endif %}
+</div>
+
+{% block include_static_jsblock1 %}
+<script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+
+<!-- Script for start rateing -->
+<script type="">
+    $('.star').click(function () 
+    {
+        var start_val;
+        start_val = $(this).val();
+        $.get('/rate/', {stars_value: start_val }, function (data) { });
+    });
+</script>
+    
+<!-- <script>
+$('.bio-toggle-btn').click(function() {
+  $('.tutor-bio').toggleClass('bio-short');
+  $(this).innerHTML = 'Show Less';
+});
+</script> -->
+{% endblock %}

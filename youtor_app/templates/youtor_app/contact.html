@@ -1,0 +1,218 @@
+{% extends './base.html' %}
+{% load static %}
+ 
+{% block title_block %}
+Youtor Contact
+{% endblock %}
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+<link href="{% static 'assets/css/material-dashboard.css' %}" rel="stylesheet" />
+<style>
+	.login-div {
+		margin-top: 20px;
+		padding: 70px 0;
+		margin-bottom: 50px;
+	}
+
+	.wrapper.wrapper-full-page {
+		height: auto;
+	}
+
+	.navbar .collapse .navbar-nav .nav-item .nav-link {
+		font-size: 16px;
+		font-weight: 600;
+		color: #de830d;
+		padding: 4px 8px;
+		letter-spacing: 0.3px;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		text-transform: capitalize;
+	}
+
+	.navbar.fixed-top {
+		margin-bottom: 0;
+	}
+
+	.col-lg-6.ml-auto.mr-auto {
+		position: relative;
+		z-index: 999;
+	}
+
+	.card.card-login.card-hidden {
+		min-height: 285px;
+	}
+
+	.card .card-header .card-title b {
+		color: #fff;
+	}
+
+	.login-page {
+		background: url('../static/img/login.jpg') no-repeat center;
+		display: block !important;
+		width: 100%;
+		height: 100%;
+		max-height: 100%;
+		background-size: cover;
+	}.page-header .container .col-lg-6 {
+    z-index: 9991 !important;
+}
+.card-body.pb-0 ul.list li {
+    width: auto;
+    float: left;
+    padding: 0 8px;
+}
+p.djvhdgvu {
+    font-size: 16px;
+}
+
+h5.font-weight500 {
+    font-weight: 500;
+}
+.card-body.pb-0 ul.list li a i.fa {
+    font-size: 24px;
+}
+p.contatcaddress {
+    position: relative;
+    padding-left: 30px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+p.contatcaddress i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 21px;
+    color: #dd820d;
+}
+@media (max-width: 767px){
+div#navbarNavDropdown.navbar-collapse.collapse.show{
+	display: block !important;
+}
+div#navbarNavDropdown {
+    position: relative;
+    left: -210px !important;
+    right: auto !important;
+    text-align: left;
+    width: 100%;
+}
+.navbar .dropdown.show .dropdown-menu, .navbar .dropdown .dropdown-menu {
+    height: auto;
+    margin: 0;
+    padding-bottom: 0;
+}
+
+p.contatcaddress i.fa-map-marker {
+    font-size: 30px;
+}
+
+p.contatcaddress i.fa.fa-envelope {
+    font-size: 20px;
+}
+}
+</style>
+{% endblock %}
+
+{% block navbar_section %}
+{% include "youtor_app/navbar.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div class="wrapper wrapper-full-page">
+	<div class="page-header contact-page sk-page login-page header-filter" filter-color="black">
+		<!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+		<div class="login-div container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="card card-login card-hidden">
+						<div class="card-header card-header-rose text-center mb-10">
+							<h3 class="card-title"><b>Contact Us</b></h3>
+						</div>
+						<div class="card-body pb-0">
+							<p class="djvhdgvu">Youtor is designed to provide an easy and convenient solution for university students to find and meet reliable tutors at affordable costs.</p>
+							<hr>
+							<p class="contatcaddress"><i class="fa fa-map-marker"></i>3570  rue Saint-Charles, Longueuil, Quebec, J4H 1M3, CA</p>
+							<p class="contatcaddress"><i class="fa fa-envelope"></i>youtor.team@gmail.com</p>	
+							<hr>
+							<h5 class="font-weight500">Like, Follow &amp; Share!</h5>
+								<ul class="list">
+									<li><a href="#"><i class="fa fa-facebook fa-3x"></i></a></li>
+									<li><a href="#"><i class="fa fa-twitter fa-3x"></i></a></li>
+									<li><a href="#"><i class="fa fa-instagram fa-3x"></i></a></li>
+								</ul>
+						</div>
+						<p><br></p>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<form class="form" method="post">
+					<!-- <form class="form" method="post" action="{% url 'login' %}">  -->
+						{% csrf_token %}
+						<div class="card card-login card-hidden">
+							<div class="card-header card-header-rose text-center mb-10">
+								<h3 class="card-title"><b>Get in Touch</b></h3>
+							</div>
+							<div class="card-body pb-0">
+									<div class="form-group bmd-form-group">
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<div class="input-group-text"><i class="material-icons">person</i>
+												</div>
+											</div>
+											<input type="text" placeholder="Name" name="name"
+												class="form-control">
+										</div>
+									</div>
+								<div class="form-group bmd-form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<div class="input-group-text"><i class="material-icons">email</i></div>
+										</div>
+										<input type="email" class="form-control" name="email" placeholder="Email">
+									</div>
+								</div>
+								<div class="form-group bmd-form-group">
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<div class="input-group-text"><i class="material-icons">chat</i></div>
+										</div>
+										<textarea type="text" rows="3" class="form-control" name="msg" placeholder="Message..."></textarea>
+
+									</div>
+								</div>
+								<div class="form-group bmd-form-group"
+									style="text-align: center; color: #df7419; font-weight: 400;">
+									{{ login_error }}
+								</div>
+							</div>
+							<div class="justify-content-center d-flex" style="padding-bottom: 20px;">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block include_static_block %}
+<!--   Core JS Files   -->
+<script src="{% static "assets/js/core/jquery.min.js" %}"></script>
+<script src="{% static "assets/js/core/popper.min.js" %}"></script>
+<script src="{% static "assets/js/core/bootstrap-material-design.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/perfect-scrollbar.jquery.min.js" %}"></script>
+<!--  Google Maps Plugin    -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Yno10-YTnLjjn_Vtk0V8cdcY5lC4plU"></script>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!--  Notifications Plugin    -->
+<script src="{% static "assets/js/plugins/bootstrap-notify.js" %}"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="{% static "assets/js/material-dashboard.min.js" %}" type="text/javascript"></script>
+<!-- Material Dashboard DEMO methods, don't include it in your project! -->
+<script src="{% static "assets/demo/demo.js" %}"></script>
+{% endblock %}

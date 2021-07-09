@@ -1,0 +1,73 @@
+{% extends './dashboard_base.html' %}
+{% load static %}
+
+{% block title_block %}
+    Booking verification
+{% endblock %}
+
+{% block include_static_cssblock1 %}
+<style>
+.success-message {
+    text-align: center;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 40%;
+  }
+  
+  .success-message__icon {
+    max-width: 75px;
+  }
+  
+  .success-message__title {
+    color: #3DC480;
+    opacity: 1;
+  }
+  .active .success-message__title {
+    opacity: 1;
+  }
+  
+  .success-message__content {
+    color: #B8BABB;
+    opacity: 1;
+  }
+  .active .success-message__content {
+    opacity: 1;
+  }
+  
+  .icon-checkmark circle {
+    fill: #3DC480;
+  }
+
+</style>  
+{% endblock %}
+
+
+{% block navbar_section %}
+    {% include "youtor_app/navbar.html" %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="success-message">
+    <svg viewBox="0 0 76 76" class="success-message__icon icon-checkmark">
+        <circle cx="38" cy="38" r="36"/>
+        <path fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M17.7,40.9l10.9,10.9l28.7-28.7"/>
+    </svg>
+    <h1 class="success-message__title">Payment Successfull</h1>
+    <div class="success-message__content">
+        <a href="{% url 'dashboard' %}">Return to Dashboard</a>
+    </div>
+</div>
+    <!-- <div class="container text-center mt-5 pt-5">
+        <p>Your booking was successfull.</p>
+    </div> -->
+{% endblock %}
+
+{% block footer_section %}
+{% endblock %}
+
+
+{% block include_static_jsblock1 %}
+{% endblock %}

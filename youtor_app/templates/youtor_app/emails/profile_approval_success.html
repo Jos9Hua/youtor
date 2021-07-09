@@ -1,0 +1,49 @@
+<html>
+{% load staticfiles %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div
+        style="width: 85%;margin: 0 auto;display: block;background: #fff2e1;border-radius: 4px;box-shadow: 0px 0px 4px #ccc;">
+        <div style="width: 95%; margin: 3%;">
+            <div class="" style=" width: 30%; margin: 0 auto 20px; display: block;     padding-top: 20px;">
+                <img src="http://{{ domain }}/static/img/youtor_logo.png" align="youter" style=" width: 100%; ">
+            </div>
+            <div style="">
+                <p style="text-align: center; font-size: 24px; font-weight: 500; background: #de830d; width: 88%;
+                    padding: 8px; margin: 0 auto 30px; color: #fff; ">
+                    Congratulations! Youtor Profile is Verified!
+                </p>
+            </div>
+            <div style=" text-align: left;margin-bottom: 30px; margin-left:6% ">
+                <p style=" font-size: 16px; ">Hi {{ user.first_name }}, <br><br>
+                        Congratulation! Your Youtor profile is verified, now you can start tutoring, by first getting started with setting your availibility in Schedule section.
+                </p>
+                <p
+                    style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                    Regards,</p>
+                <p
+                    style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                    Youtor team</p>
+            </div>
+            <div style=" text-align: center; padding-bottom: 10px; ">
+                <a href="http://{{ domain }}{% url 'dashboard' %}"
+                    style=" padding: 5px; text-decoration: none; color: #444; ">Home</a>
+                <a href="#" style=" padding: 5px; text-decoration: none; color: #444; ">
+                    Contact Us
+                </a>
+                <a href="http://{{ domain }}{% url 'login' %}"
+                    style=" padding: 5px; text-decoration: none; color: #444; ">Login</a>
+            </div>
+            <div style="text-align: center;padding-bottom: 20px;">
+                <p style="font-size: 14px;">&copy; Copyright 2019. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

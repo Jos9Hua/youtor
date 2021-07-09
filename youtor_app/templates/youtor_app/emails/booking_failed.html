@@ -1,0 +1,93 @@
+<html>
+{% load staticfiles %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div
+        style="width: 85%;margin: 0 auto;display: block;background: #fff2e1;border-radius: 4px;box-shadow: 0px 0px 4px #ccc;">
+        <div style="width: 95%; margin: 3%;">
+            <div class="" style=" width: 30%; margin: 0 auto 20px; display: block;     padding-top: 20px;">
+                <img src="http://{{ domain }}/static/img/youtor_logo.png" align="youter" style=" width: 100%; ">
+            </div>
+            <div style="">
+                <p style="text-align: center; font-size: 24px; font-weight: 500; background: #de830d; width: 88%;
+                    padding: 8px; margin: 0 auto 30px; color: #fff; ">
+                    Youtor - Tution Booking Failed!
+                </p>
+            </div>
+            <div style=" text-align: left;margin-bottom: 30px; margin-left:6% ">
+                <p style=" font-size: 16px; ">Hi {{ booking_details.student.first_name }}, <br><br>
+                    Unfortunately, your tution booking was unsuccessful, please try booking again. Any amount deducted will be refunded back within 15 working days.
+                    <br>
+                    Following are the details for the transaction:
+                </p>
+                <div class="for-table" style="text-align: center; margin: 1%;">
+                    <table style="border: solid 1px black; padding: 1%;">
+                        <tr>
+                            <td>
+                                <p>Tutor Name: </p>
+                            </td>
+                            <td>{{ booking_details.tutor.first_name }} {{ booking_details.tutor.last_name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Date: </p>
+                            </td>
+                            <td>{{ booking_details.start_time.date }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Time: </p>
+                            </td>
+                            <td>{{ booking_details.start_time|time:'H:i' }} to
+                                {{ booking_details.end_time|time:'H:i' }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Total Amount: </p>
+                            </td>
+                            <td>$ {{ booking_details.total_session_amount }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Transaction ID: </p>
+                            </td>
+                            <td>{{ booking_details.transaction_id }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>Booking Status: </p>
+                            </td>
+                            <td>Failed</td>
+                        </tr>
+                    </table>
+                </div>
+                <p
+                    style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                    Regards,</p>
+                <p
+                    style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                    Youtor team</p>
+            </div>
+            <div style=" text-align: center; padding-bottom: 10px; ">
+                <a href="http://{{ domain }}{% url 'dashboard' %}"
+                    style=" padding: 5px; text-decoration: none; color: #444; ">Home</a>
+                <a href="#" style=" padding: 5px; text-decoration: none; color: #444; ">
+                    Contact Us
+                </a>
+                <a href="http://{{ domain }}{% url 'login' %}"
+                    style=" padding: 5px; text-decoration: none; color: #444; ">Login</a>
+            </div>
+            <div style="text-align: center;padding-bottom: 20px;">
+                <p style="font-size: 14px;">&copy; Copyright 2019. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

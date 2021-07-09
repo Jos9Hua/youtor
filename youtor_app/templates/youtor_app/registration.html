@@ -1,0 +1,238 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<!-- CSS Files -->
+<link href="{% static "assets/css/material-dashboard.css" %}" rel="stylesheet" />
+<style>
+  .modal-body>.img-responsive {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .modal-content .errorlist p {
+    color: black;
+  }
+  @media (min-width: 576px){
+  .modal-dialog.modal-md {
+    max-width: 600px;
+    margin: 1.75rem auto;
+}
+button.navbar-toggler.navbar-toggler-right.collapsed,.navbar .container .navbar-toggler {
+    transition: none !important;
+    transform: none !important;
+}
+  }
+	.navbar .collapse .navbar-nav .nav-item .nav-link {
+		font-size: 16px;
+		font-weight: 600;
+		color: #de830d;
+		padding: 4px 8px;
+		letter-spacing: 0.3px;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		text-transform: capitalize;
+	}
+
+	.navbar.fixed-top {
+		margin-bottom: 0;
+  }
+  .card .card-header .card-title b {color: #fff;}
+
+  .register-div {
+    margin-top: 20px;
+    padding-top: 70px;
+    margin-bottom: 50px;
+  }
+  
+  @media (max-width: 767px){
+    nav button.navbar-toggler.navbar-toggler-right.collapsed, nav.navbar .container .navbar-toggler {
+    transition: none !important;
+    transform: none !important;
+}
+  .wrapper.wrapper-full-page {
+    height: auto;
+}
+
+div#navbarNavDropdown.navbar-collapse.collapse.show{
+	display: block !important;
+}
+div#navbarNavDropdown {
+    position: relative;
+    right: auto !important;
+    text-align: left;
+    width: 100%;
+}
+.navbar .dropdown.show .dropdown-menu, .navbar .dropdown .dropdown-menu {
+    height: auto;
+    margin: 0;
+    padding-bottom: 0;
+}
+.nav-open .wrapper-full-page {
+  transform: none !important;
+}
+.nav-open .navbar .container {
+    transform: none !important;
+}
+
+.nav-open .navbar .container button.navbar-toggler.navbar-toggler-right.toggled {
+    transform: none !important;
+}
+  }
+</style>
+{% endblock %}
+
+{% block navbar_section %}
+{% include "youtor_app/navbar.html" %}
+{% endblock %}
+
+{% block content %}
+
+
+<div class="wrapper wrapper-full-page">
+  <div class="page-header login-page header-filter" filter-color="black"
+    style="background-image: url('{% static 'assets/img/login.jpg' %}'); background-size: cover; background-position: top center;">
+    <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+
+    <div class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+          <div class="card card-signup card-plain mt-0">
+            <div class="modal-body">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              {% if registered %}
+              <img src="{% static "gif/8659-success-tick.gif" %}" class="img-responsive" width="300" height="300">
+              <br>
+              <p align="center"><strong>Thank you for registering!</strong></p>
+              <p>We have sent you a verification link, please check your mail and verify your account to get started with Youtor.</p>
+              {% elif error %}
+              {{ error }}
+              {% endif %}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="register-div container">
+      <div class="row">
+        <div class="col-lg-10 col-md-10 col-sm-12 ml-auto mr-auto">
+          <form class="form" action="{% url 'register' %}" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+            <div class="card card-login card-hidden">
+              <div class="card-header card-header-rose text-center mb-10">
+                <h3 class="card-title"><b>Welcome To Youtor</b></h3>
+              </div>
+              <div class="card-body ">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">First Name*</label>
+                      <input type="text" name="first_name" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Last Name*</label>
+                      <input type="text" name="last_name" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Email*</label>
+                      <input type="email" name="email" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Password*</label>
+                      <input type="password" name="password" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Confirm Password*</label>
+                      <input type="password" name="confirm_password" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <select class="form-control" required name="role" data-style="btn btn-link"
+                        id="exampleFormControlSelect1">
+                        <option class="bmd-label-floating">Role*</option>
+                        <option value="0">Student</option>
+                        <option value="1">Tutor</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6 d-inline-flex">
+                    <div style="margin: 16px 8px 0px 0px;">+1</div>
+                    <div class="form-group bmd-form-group" style="width: -webkit-fill-available;">
+                      <label class="bmd-label-floating">Contact*</label>
+                      <div>
+                        <input type="tel" name="contact" class="form-control" required>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Year of study* (between 1 to 6)</label>
+                      <input type="number" name="year_of_study" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Major*</label>
+                      <input type="text" name="major" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer justify-content-center">
+                <button type="submit" class="btn btn-primary">Register</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block include_static_jsblock %}
+<!--   Core JS Files   -->
+<script src="{% static "assets/js/core/jquery.min.js" %}"></script>
+<script src="{% static "assets/js/core/popper.min.js" %}"></script>
+<script src="{% static "assets/js/core/bootstrap-material-design.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/perfect-scrollbar.jquery.min.js" %}"></script>
+<script src="{% static "assets/js/plugins/bootstrap-selectpicker.js" %}"></script>
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!--  Notifications Plugin    -->
+<script src="{% static "assets/js/plugins/bootstrap-notify.js" %}"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="{% static "assets/js/material-dashboard.min.js" %}" type="text/javascript"></script>
+<!-- Material Dashboard DEMO methods, don't include it in your project! -->
+<script src="{% static "assets/demo/demo.js" %}"></script>
+<script>
+  $(document).ready(function () {
+    {% if registered or error %}
+    $('.modal').modal('show');
+    {% endif %}
+  });
+</script>
+{% endblock %}

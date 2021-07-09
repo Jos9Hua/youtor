@@ -1,0 +1,188 @@
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" /> 
+    <link rel="stylesheet" href="{% static 'vendors/core/main.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendors/daygrid/main.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendors/timegrid/main.min.css' %}" />
+</head>
+
+<body>
+    <div id='calendar-container'>
+        <div id='calendar'></div>
+        <div class="checkout-button">
+        </div>
+    </div>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+    <script src="{% static 'vendors/core/main.min.js' %}"></script>
+    <script src="{% static 'vendors/interaction/main.min.js' %}"></script>
+    <script src="{% static 'vendors/daygrid/main.min.js' %}"></script>
+    <script src="{% static 'vendors/timegrid/main.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');
+            // initialize the calendar
+            // -----------------------------------------------------------------
+            var calendar = new Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek, timeGridDay'
+                },
+                timeZone: 'UTC',
+                minTime: "7:00:00",
+                maxTime: "24:00:00",
+                defaultView: 'timeGridWeek',
+                availableForTution: true,
+                alreadyBooked: true,
+                editable:  true,
+                selectable: true,
+                events: setSlotList(),
+                timeFormat: 'H(:mm)t',
+                eventColor: '#4390eb',
+                selectAllow : function(selectInfo) {
+                    var events = calendar.getEvents();
+                    var allowed_area = [];
+                    events.forEach(function(evt) {
+                        if (evt.groupId == 'availableForTution') {
+                            if (evt.start <= selectInfo.start 
+                                    && evt.end >= selectInfo.end) {
+                                    allowed_area.push(evt)
+                            }
+                        }
+                    });
+                    return allowed_area.length > 0;
+                },
+                selectOverlap: function(eventObj) {
+                    console.log("eventObj overlap:",eventObj);
+                    return eventObj.groupId !== 'alreadyBooked';
+                },
+                select: function (eventObj) {
+                    // Create new Event on datetime select
+                    render_new_event(eventObj);
+                    calendar.unselect()
+                },
+                
+                eventRender: function(eventObj) { 
+                    var event_element = $(eventObj.el);
+                    if (!eventObj.el.classList.contains('fc-bgevent')) {
+                        event_element.find(".fc-bg").css("pointer-events","none");
+                        event_element.append("<div style='position:absolute;bottom:0px;right:0px' ><button type='button' style='padding:1px;' id='btnDeleteEvent' class='btn btn-light'>X</button></div>" );
+                        event_element.find("#btnDeleteEvent").click(function() {
+                            if (confirm("Are you sure about this change?")) {
+                                eventObj.event.remove()
+                            }
+                            else {
+                                console.log("No");
+                            }
+                        });
+                    }
+                },
+            });
+            calendar.render();
+
+            function render_new_event(info) {
+                console.log("Tution Slot to be booked", info);
+                var did = Math.floor((Math.random() * 1000) + 1)
+                calendar.addEvent({
+                    id: did,
+                    constraint: 'availableForTution',
+                    start: info.start,
+                    end: info.end,
+                });
+                var event_element = $('.checkout-button');
+                event_element.html(
+                    '<button id="checkout" name="tutionCheckout" class="btn btn-success">Proceed to Booking &nbsp; >></button>'
+                )
+                event_element.find("#checkout").click(function() {
+                    var all_events = calendar.getEvents();
+                    var events_to_book = [];
+                    all_events.forEach(function(e) {
+                        if (e.rendering != 'background') {
+                            events_to_book.push({
+                                id: e.id,
+                                start: e.start.toUTCString(),
+                                end: e.end.toUTCString(),
+                            })
+                        }
+                    });
+                    console.log("events_to_book: ", events_to_book);
+                    if (events_to_book.length >= 1) {
+                        $.ajax({
+                            type: 'POST',
+                            url: "{% url 'proceed_to_checkout' %}",
+                            data: {
+                                'tutor_user_id': all_events[0].extendedProps.tutor_user_id,
+                                'selected_slots': JSON.stringify(events_to_book),
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            success: function (data, textStatus) {
+                                var url= "{% url 'process_tution_booking' %}"; 
+                                window.location = url;
+                            },
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                });
+            }
+
+            function setSlotList() {
+                var availableTutionSlot = []
+
+                {% for slot in offer_slot_list %}
+                    availableTutionSlot.push({
+                        id: {{ slot.id }},
+                        groupId: 'availableForTution',
+                        title: "Session " + {{ forloop.counter }},
+                        start: "{{ slot.start_time }}",
+                        end: "{{ slot.end_time }}",
+                        sessionId: {{ slot.tutor_offers_id }},
+                        tutor_user_id: {{ slot.tutor_user_id }},
+                        rendering: 'background',
+                        backgroundColor: '#00e107',
+                        editable: false,
+                    });
+                {% endfor %}
+
+                {% for slot in booked_slots %}
+                    availableTutionSlot.push({
+                        id: {{ slot.id }},
+                        groupId: 'alreadyBooked',
+                        title: "Booked",
+                        start: "{{ slot.start_time }}",
+                        end: "{{ slot.end_time }}",
+                        tutor_user_id: {{ slot.tutor_id }},
+                        rendering: 'background',
+                        backgroundColor: '#ff0000',
+                        editable: false,
+                    });
+                {% endfor %}
+                console.log("All events: ", availableTutionSlot);
+                return availableTutionSlot
+            }
+        });
+    </script>
+
+<style>
+    button#checkout {
+    position: fixed;
+    bottom: 15px;
+    right: 10px;
+    z-index: 999;
+    border-radius: 0 !important;
+    box-shadow: 0px 0px 4px #000;
+    border: 1px dashed #000;
+}
+</style>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+{% load static %}
+
+{% for offer in tutorlist %}
+
+{{ offer.user.first_name }}
+<div class="col-md-3">
+    <div class="card card-profile">
+        <div class="card-avatar">
+            <a href="">
+            </a>
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">{{ tutor_details.name }}</h4>
+            <div class="card-description">
+                <p class="tutor-bio bio-short">{{ offer.bio }}</p>
+                <!-- <span class="bio-toggle-btn">Show more...</span> -->
+                <p>Major: {{ tutor_details.major }}</p>
+                <table class="cool-table">
+                    <tr>
+                        <td class="with-bar heading"> Price:</td>
+                        <td class="heading"> Rating: </td>
+                    </tr>
+                    <tr>
+                        <td class="with-bar"> ${{ offer.rate }}</td>
+                        <td class="stars">
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+            </div>
+            <button class="btn btn-round tutor" id="23" data-toggle="modal" data-target="#tutorModal">Book
+                Now</button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>

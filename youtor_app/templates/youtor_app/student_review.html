@@ -1,0 +1,76 @@
+<!-- REVIEW MODAL -->
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">User Rating</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <table class="cool-table">
+                    <tr>
+                        <td class="text-center">
+                            {% csrf_token %}
+                            <label>Rate</label>
+                            <div class="rating" id="{{tutor_details.id}}">
+                                <input type="radio" id="star5_{{tutor_details.id}}" name="rating" value="5"
+                                    class="star" />
+                                <label class="full" for="star5_{{tutor_details.id}}" title="5"></label>
+
+                                <input type="radio" id="star4half_{{tutor_details.id}}" name="rating" value="4.5"
+                                    class="star" />
+                                <label class="half" for="star4half_{{tutor_details.id}}" title="4.5"></label>
+
+                                <input type="radio" id="star4_{{tutor_details.id}}" name="rating" value="4"
+                                    class="star" />
+                                <label class="full" for="star4_{{tutor_details.id}}" title="4"></label>
+
+                                <input type="radio" id="star3half_{{tutor_details.id}}" name="rating" value="3.5"
+                                    class="star" />
+                                <label class="half" for="star3half_{{tutor_details.id}}" title="3.5"></label>
+
+                                <input type="radio" id="star3_{{tutor_details.id}}" name="rating" value="3"
+                                    class="star" />
+                                <label class="full" for="star3_{{tutor_details.id}}" title="3"></label>
+
+                                <input type="radio" id="star2half_{{tutor_details.id}}" name="rating" value="2.5"
+                                    class="star" />
+                                <label class="half" for="star2half_{{tutor_details.id}}" title="2.5"></label>
+
+                                <input type="radio" id="star2_{{tutor_details.id}}" name="rating" value="2"
+                                    class="star" />
+                                <label class="full" for="star2_{{tutor_details.id}}" title="2"></label>
+
+                                <input type="radio" id="star1half_{{tutor_details.id}}" name="rating" value="1.5"
+                                    class="star" />
+                                <label class="half" for="star1half_{{tutor_details.id}}" title="1.5"></label>
+
+                                <input type="radio" id="star1_{{tutor_details.id}}" name="rating" value="1"
+                                    class="star" />
+                                <label class="full" for="star1_{{tutor_details.id}}" title="1"></label>
+
+                                <input type="radio" id="starhalf_{{tutor_details.id}}" name="rating" value="0.5"
+                                    class="star" />
+                                <label class="half" for="starhalf_{{tutor_details.id}}" title="0"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <label>Write Review</label>
+                        <input type="text" class="form-control">
+                    </tr>
+                    <tr>
+                        <label>user id</label>
+                        <input type="text" class="form-control">
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>

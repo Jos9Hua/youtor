@@ -1,0 +1,62 @@
+{% load static %}
+{% if request.session.user_type == 'Tutor' %}
+<!--Tutor Sidebar -->
+<div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+  <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+  <!-- Bootstrap List Group -->
+  <ul class="list-group sticky-top sticky-offset">
+    <!-- Separator with title -->
+    <a href="{% url 'dashboard' %}" class="sdm1 pt-5 mt-5 pb-5 list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+        <span class="fa fa-home fa-fw mr-3"></span>
+        <span class="menu-collapsed">Dashboard</span>
+      </div>
+    </a>
+    <a href="{% url 'schedule' %}" class="sdm2 pb-5 list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+        <span class="fa fa-tasks fa-fw mr-3"></span>
+        <span class="menu-collapsed">Schedule</span>
+      </div>
+    </a>
+    <a href="{% url 'dashboard' %}" class="sdm3 pb-5 list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-start align-items-center">
+        <span class="fa fa-info fa-fw mr-3"></span>
+        <span class="menu-collapsed">Finance</span>
+      </div>
+    </a>
+    <a href="{% url 'dashboard' %}" class="sdm4 pb-5 list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-info fa-fw mr-3"></span>
+          <span class="menu-collapsed">Help</span>
+        </div>
+      </a>
+  </ul>
+  <!-- List Group END-->
+</div>
+<!--Tutor sidebar-container END -->
+{% elif request.session.user_type == 'Student' %}
+<!--Tutor Sidebar -->
+<div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+    <ul class="list-group sticky-top sticky-offset">
+      <a href="{% url 'dashboard' %}" class="sdm1 pt-4 mt-5 pb-5 list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-home fa-fw mr-3"></span>
+          <span class="menu-collapsed">Dashboard</span>
+        </div>
+      </a>
+      <a href="{% url 'student-booking' %}" class="sdm5 pb-5 list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-plus fa-fw mr-3"></span>
+          <span class="menu-collapsed">My Booking</span>
+        </div>
+      </a>
+      <!-- <a href="#" class="sdm6 pb-5 list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-tasks fa-fw mr-3"></span>
+          <span class="menu-collapsed">Student Module 3</span>
+        </div>
+      </a> -->
+    </ul>
+  </div>
+  <!--Tutor sidebar-container END -->
+{% endif %}

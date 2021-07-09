@@ -1,0 +1,488 @@
+{% extends './dashboard_base.html' %}
+{% load static %}
+{% load youtor_utils %}
+
+{% block title_block %}
+Youtor - User Profile
+{% endblock %}
+
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css">
+<link rel="stylesheet" href="{% static 'assets/css/material-dashboard.css' %}" />
+<style>
+    img {
+        max-width: 280px;
+        max-height: 280px;
+    }
+
+
+    .navbar .collapse .navbar-nav .nav-item .nav-link {
+    font-size: 16px;
+    font-weight: 600;
+    color: #de830d;
+    padding: 4px 8px;
+    letter-spacing: 0.3px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    text-transform: capitalize;
+}
+
+.navbar.fixed-top {
+    margin-bottom: 0;
+}
+
+.errorClass{
+    border : 1px solid #de830d;
+    border-radius: 4px;
+}
+.card-header:first-child {
+    width: 30%;
+}
+
+.for-profile-success .modal.show .modal-dialog {
+    transform: translate(0, 50%) !important;
+}
+
+.for-profile-errors .modal.show .modal-dialog {
+    transform: translate(0, 50%) !important;
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block dashboard_main_content %}
+<div class=" content user_profile">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Personal Info</h4>
+                        <p class="card-category">Update your personal information here</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="userProfileForm" name="userProfileForm" enctype="multipart/form-data" action="{% url 'user_profile' %}" method="POST" onsubmit="return validateFormSK(this)">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_form.user.first_name.id_for_label }}">*Fist
+                                                    Name</label>
+                                                {{ user_form.first_name }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_form.last_name.id_for_label }}">*Last
+                                                    Name</label>
+                                                {{ user_form.last_name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_form.email.id_for_label }}">Email
+                                                    address</label>
+                                                <br>
+                                                {{ user.email }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_profile_form.contact.id_for_label }}">*Contact</label>
+                                                {{ user_profile_form.contact }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_profile_form.year_of_study.id_for_label }}">Year of
+                                                    Study</label>
+                                                {{ user_profile_form.year_of_study }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="{{ user_profile_form.major.id_for_label }}">Major</label>
+                                                {{ user_profile_form.major }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    {% if user_profile_instance.profile_image %}
+                                    <div class="display-profile-img">
+                                        <img id="profile-img" src="{{ user_profile_instance.profile_image.url }}">
+                                    </div>
+                                    {% else %}
+                                    <div class="display-profile-img">
+                                        <img id="user_image" class="img" width="130" height="130" src="{% static 'img/default-user.png' %}" />
+                                    </div>
+                                    {% endif %}
+                                    <div class="user-profile-image form-group">
+                                        <label class="bmd-label-floating"
+                                            for="{{ user_profile_form.profile_image.id_for_label }}">Upload your
+                                            picture:
+                                        </label>
+                                        <input type="file" name="profile_image" accept="image/*" onchange="document.getElementById('profile-img').src = window.URL.createObjectURL(this.files[0])" class="form-control" id="id_profile_image">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="myBtn" name='submitPersonalInfo' data-toggle="modal" class="btn btn-primary pull-right">Update Info</button>
+                          
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% get_user_type request.user as user_type %}
+
+{% if user_type == 'Tutor' %}
+<div class=" content offer-tution">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Your Tutor Profile</h4>
+                        <p class="card-category">Update your tutor profile details here</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="offerTutionForm"  name="offerTutionForm" class="offer-tution-form" enctype="multipart/form-data" action="/user_profile"
+                            method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-6 pb-5">
+                                            <label class="bmd-label-floating">*Add Subjects</label>
+                                            <div class="form-group subject-wrapper">                                                
+                                                <input name="subjects" type="text" class="form-control" id="subjects" placeholder="Enter subjects you want to teach" tabindex="-1" style="position: absolute; left: -10000px;">
+                                            </div>
+                                                <input type="hidden" id="toDelSubjects" name="toDelSubjects" value="">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="id_rate">*Rate: ($/30min)</label>
+                                                {{ offer_form.rate }}
+                                                <!-- <input type="number" name="rate" step="0.01" class="form-control" id="id_rate"> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="id_bio">*Bio</label>
+                                                {{ offer_form.bio }}
+                                                <!-- <textarea name="bio" cols="40" rows="10" class="form-control" id="id_bio"></textarea> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating"
+                                                    for="id_transcript">*Upload your Transcript</label>
+                                                <br>
+                                                {{ offer_form.transcript }}
+                                                <!-- <input type="file" name="transcript" class="form-control" id="id_transcript"> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="bmd-label-floating">Add tags</label>
+                                                <input name="tags" type="text" class="form-control"
+                                                    id="tagSearch" placeholder="Search and enter tags" required="required"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" name="submitOfferInfo"  data-toggle="modal" id="updateprofile" class="btn btn-primary pull-right">Update Tutor Profile</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+<div class="for-profile-success">
+    <div class="modal fade" id="requestSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Success!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Profil has been updated successfully</p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal to show when there's error on updating info -->
+<div class="for-profile-errors">
+    <div id="updateErrorModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Error updating information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                {% if status == 400 %}
+                    {{ user_form_errors }}
+                    {{ profile_form_errors }}
+                    {{ offer_form_errors }}
+                {% elif status == 500 %}
+                <p class="color-warning">Something went wrong! Please try again. </p>
+                {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+{% block include_static_jsblock1 %}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+
+<script>
+    // ######################################################
+    // For tags input and suggestion
+    var tagSourceDataObj = [];
+    var selectedTags = [];
+
+    {% for tag in available_tags %}
+        tagSourceDataObj.push({ id: '{{ tag.id }}', value: '{{ tag.name }}' });
+    {% endfor %}
+
+    {% for tag in offer_instance.tags.all %}
+        selectedTags.push({ id: '{{ tag.id }}', value: '{{ tag.name }}' });
+    {% endfor %}
+
+    $("#tagSearch").tokenfield({
+        autocomplete: {
+            source: tagSourceDataObj,
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+    });
+
+    $('#tagSearch').tokenfield('setTokens', selectedTags);
+
+    $("#tagSearch").on("tokenfield:createtoken", function (event) {
+        var existingTokens = $(this).tokenfield("getTokens");
+        var exists = true;
+
+        //PREVENT DUPLICATION
+        $.each(existingTokens, function (index, token) {
+            if (token.value === event.attrs.value) event.preventDefault();
+        });
+
+        //ALLOW ONLY TOKENS FROM SOURCE
+        $.each(tagSourceDataObj, function (index, token) {
+            if (token.value !== event.attrs.value) exists = false;
+        });
+        if (exists === true) event.preventDefault();
+    }).on('tokenfield:removedtoken', function (e) {
+        var tkn_to_remove = e.attrs.value
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'remove_subs_tags' %}",
+            data: {
+                'tag_to_remove': tkn_to_remove,
+                'offer_id': '{{ offer_instance.id }}',
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (data) {
+                // alert("Event slot updated successfully!!");
+            },
+            error: function (e) {
+                // alert(status, e);
+            }
+        });
+    })
+    // -----------------------------------------------------
+
+
+    // ######################################################
+    // For subject input and suggestion
+    var subjectSourceDataObj = [];
+    var selectedSubjects = [];
+
+    {% for sub in all_subjects %}
+        subjectSourceDataObj.push({ id: '{{ sub.id }}', value: '{{ sub.subject_name }}' });
+    {% endfor %}
+
+    $("#subjects").tokenfield({
+        autocomplete: {
+            source: subjectSourceDataObj,
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+    });
+
+    {% if offer_instance %}
+        {% for sub in user_profile_instance.subject.all %}
+            selectedSubjects.push({ id: '{{ sub.id }}', value: '{{ sub.subject_name }}' });
+        {% endfor %}
+        $('#subjects').tokenfield('setTokens', selectedSubjects);
+    {% endif %}
+
+    $("#subjects").on("tokenfield:createtoken", function (event) {
+        var existingTokens = $(this).tokenfield("getTokens");
+        var exists = true;
+
+        //PREVENT DUPLICATION
+        $.each(existingTokens, function (index, token) {
+            if (token.value === event.attrs.value) event.preventDefault();
+        });
+
+        //ALLOW ONLY TOKENS FROM SOURCE
+        $.each(subjectSourceDataObj, function (index, token) {
+            if (token.value === event.attrs.value) exists = false;
+        });
+        if (exists === true) event.preventDefault();
+    }).on('tokenfield:removedtoken', function (e) {
+        var tkn_to_remove = e.attrs.value
+        // $('#toDelSubjects1').val()
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'remove_subs_tags' %}",
+            data: {
+                'user_id': {{ user.id }},
+                'sub_to_remove': tkn_to_remove,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (data) {
+                // alert("Event slot updated successfully!!");
+            },
+            error: function (e) {
+                // alert(status, e);
+            }
+        });
+    })
+    // -----------------------------------------------------
+</script>
+
+<script>
+
+$("#offerTutionForm").submit(function(event) {
+    if ($('#subjects').val()=="") {
+        $(".subject-wrapper").addClass('errorClass')
+        event.preventDefault();
+    }
+
+    if ($('#id_rate').val()=="") {
+        $("#id_rate").addClass('errorClass')
+        event.preventDefault();
+    }
+    if ($('#id_bio').val()=="") {
+        $("#id_bio").addClass('errorClass')
+        event.preventDefault();
+    }
+    
+    {% if not offer_instance.transcript %}
+        if ($('#id_transcript').val()=="") {
+            $("#id_transcript").addClass('errorClass')
+            event.preventDefault();
+        }
+    {% endif %}
+});
+
+$('#id_rate').on('change', function() {
+    $("#id_rate").removeClass('errorClass')
+})
+$('#id_bio').on('change', function() {
+    $("#id_bio").removeClass('errorClass')
+})
+$('#id_transcript').on('change', function() {
+    $("#id_transcript").removeClass('errorClass')
+})
+
+
+// Personal profile form submit handle
+$("#userProfileForm").submit(function(event) {
+    if ($('#id_first_name').val()=="") {
+        $("#id_first_name").addClass('errorClass')
+        event.preventDefault();
+    }
+    if ($('#id_last_name').val()=="") {
+        $("#id_last_name").addClass('errorClass')
+        event.preventDefault();
+    }
+    if ($('#id_contact').val()=="") {
+        $("#id_contact").addClass('errorClass')
+        event.preventDefault();
+    }
+});
+
+function validateFormSK(){
+    console.log($("input#id_major").val());
+    if(!$("input#id_major").val()){
+        $("input#id_major").addClass("erroClass");
+        return false;
+    }
+}
+
+$('#id_first_name').on('change', function() {
+    $("#id_first_name").removeClass('errorClass')
+})
+$('#id_last_name').on('change', function() {
+    $("#id_last_name").removeClass('errorClass')
+})
+$('#id_contact').on('change', function() {
+    $("#id_contact").removeClass('errorClass')
+})
+</script>
+
+<script>
+    {% if status == 400 or status == 500 %}
+        $('#updateErrorModal').modal('show');
+    {% elif status == 200 %}
+        $('#requestSuccessModal').modal('show');
+    {% endif %}
+</script>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+body {
+    background-color: #eee;
+    color: #3C4858;
+    font-weight: 300;
+}
+
+.slot-wrapper{
+    background-color: #f3c7a1;
+    padding: 5px;
+    border-radius: 10px;
+}

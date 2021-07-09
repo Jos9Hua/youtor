@@ -1,0 +1,85 @@
+{% load static %}
+
+
+<!-- Bootstrap NavBar -->
+<nav id="youtor-nav" class="navbar navbar-expand-md fixed-top shadow bg-white">
+    <div class="container">
+        {% if user.is_authenticated == True %}
+        <a class="navbar-brand" href="{% url 'dashboard' %}">
+            <img class="d-inline-block align-top" src="{% static "img/youtor_logo.png" %}" width="150px" alt="">
+            <span class="menu-collapsed"></span>
+        </a>
+        {% elif user.is_authenticated == False %}
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img class="d-inline-block align-top" src="{% static "img/youtor_logo.png" %}" width="150px" alt="">
+            <span class="menu-collapsed"></span>
+        </a>
+        {% endif %}
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav col-md-12">
+                {% if user.is_authenticated == True %}
+                <li class="nav-item submenu dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i></a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_profile' %}">User Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                {% elif user.is_authenticated == False %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                <li class="nav-item login_nav_link">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item submenu dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false">Help</a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item submenu dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false">Process</a>
+                    <ul class="dropdown-menu">
+                        <li class="nav-item"><a class="nav-link scroll-tab"
+                                href="{% url 'index' %}#home-tab">Students</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link scroll-tab"
+                                href="{% url 'index' %}#profile-tab">Tutors</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- NavBar END -->

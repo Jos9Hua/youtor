@@ -1,0 +1,171 @@
+{% extends './dashboard_base.html' %}
+{% load static %}
+
+
+{% block title_block %}
+Youtor - User Profile
+{% endblock %}
+
+
+{% block include_static_cssblock1 %}
+<link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<!-- CSS Files -->
+<link rel="stylesheet" href="{% static 'assets/css/material-dashboard.css' %}" />
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css">
+
+<style>
+    img {
+        max-width: 280px;
+        max-height: 280px;
+    }
+</style>
+
+{% endblock %}
+
+
+{% block dashboard_main_content %}
+<div class=" content offer-tution">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Offer Tution</h4>
+                        <p class="card-category">Upload an offer for a tution</p>
+                    </div>
+                    <div class="card-body">
+                        <form class="offer-tution-form" enctype="multipart/form-data" action="{% url 'offer_tutions' %}"
+                            method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ offer_form.subject.errors }}
+                                                <label class="bmd-label-floating"
+                                                    for="{{ offer_form.subject.id_for_label }}">Select a Subject</label>
+                                                {{ offer_form.subject }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ offer_form.rate.errors }}
+                                                <label class="bmd-label-floating"
+                                                    for="{{ offer_form.rate.id_for_label }}">Rate: ($/30min)</label>
+                                                {{ offer_form.rate }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ offer_form.bio.errors }}
+                                                <label class="bmd-label-floating"
+                                                    for="{{ offer_form.bio.id_for_label }}">Bio</label>
+                                                {{ offer_form.bio }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{ offer_form.transcript.errors }}
+                                                <label class="bmd-label-floating"
+                                                    for="{{ offer_form.transcript.id_for_label }}">Upload your
+                                                    Transcript</label>
+                                                {{ offer_form.transcript }}
+                                                <!-- <input type="file" name="transcript" onchange="readURL(this);" class="form-control" required="" id="id_transcript"> -->
+                                                <!-- <img id="transcript_image"  src="{{ offer_form.transcript.url }}" alt="your image" /> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                {{ tag_form.name.errors }}
+                                                <label class="bmd-label-floating"
+                                                    for="{{ tag_form.name.id_for_label }}">Add tags</label>
+                                                <!-- {{ tag_form.name }} -->
+                                                <input name="name" type="text" class="form-control" id="search"
+                                                    placeholder="Search and enter tags" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% for e in errors %}
+                            {{ e }}
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary pull-right">Post Offer</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block include_static_jsblock1 %}
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script> -->
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.js"></script>
+<script>
+    $(function () {
+        //var sourceDataObj = jQuery.parseJSON( "https://jsonplaceholder.typicode.com/comments" );
+
+        //THIS SMALL SAMPLE WORKS
+        var sourceDataObj = [];
+
+        {% for tag in available_tags %}
+        sourceDataObj.push({ id: '{{ tag.id }}', value: '{{ tag.name }}' });
+        {% endfor %}
+
+        $("#search").tokenfield({
+            autocomplete: {
+                source: sourceDataObj,
+                delay: 100
+            },
+            showAutocompleteOnFocus: true
+        });
+
+        $("#search")
+            .on("tokenfield:createtoken", function (event) {
+                var existingTokens = $(this).tokenfield("getTokens");
+                var exists = true;
+                //PREVENT DUPLICATION
+                $.each(existingTokens, function (index, token) {
+                    if (token.value === event.attrs.value) event.preventDefault();
+                });
+                //ALLOW ONLY TOKENS FROM SOURCE
+                $.each(sourceDataObj, function (index, token) {
+                    if (token.value !== event.attrs.value) exists = false;
+                });
+                if (exists === true) event.preventDefault();
+            })
+
+            .on("tokenfield:removedtoken", function (event) {
+                alert("Token " + event.attrs.value + " removed!");
+            });
+    });
+</script>
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#transcript_image')
+                    .attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}
