@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'phonenumber_field',
-    'paypal.standard.ipn',
+    # 'paypal.standard.ipn',
 ]
 PHONENUMBER_DB_FORMAT = 'E164'
 PHONENUMBER_DEFAULT_REGION = 'CA'
@@ -84,7 +84,6 @@ WSGI_APPLICATION = 'youtor.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -152,10 +151,12 @@ LOGOUT_REDIRECT_URL = '/'
 # EMAIL_HOST_PASSWORD = 'gnls#zWw0'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+DEFAULT_FROM_EMAIL = 'donotreply@youtor.ca'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_HOST_USER = 'donotreply@youtor.ca'
+EMAIL_HOST_PASSWORD = 'Bestoncampus1!'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'youtor.team@gmail.com'
-EMAIL_HOST_PASSWORD = 'Bestoncampus1'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 SITE_ID=3

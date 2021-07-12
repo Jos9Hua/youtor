@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from django.db.models.signals import post_save
 from phonenumber_field.modelfields import PhoneNumberField
-from paypal.standard.ipn.models import PayPalIPN
+# from paypal.standard.ipn.models import PayPalIPN
 
 
 def current_year():
