@@ -11,7 +11,7 @@ urlpatterns = [
     path('faq', views.faq, name='faq'),
     path('contact', views.contact, name='contact'),
     path('register', views.register, name='register'),
-    url(r'^activate/(?P<user_id>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',views.activate, name='activate'),
+    re_path(r'^activate/(?P<user_id>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,6}-[0-9A-Za-z]{1,32})/$',views.activate, name='activate'),
     path('dashboard', views.dashboard_view, name='dashboard'),
     path('user_profile', views.user_profile_view, name='user_profile'),
     path('logout', auth_views.LogoutView.as_view(next_page=base.LOGOUT_REDIRECT_URL), name='logout'),
