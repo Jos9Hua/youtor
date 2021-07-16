@@ -161,7 +161,7 @@
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <label class="bmd-label-floating">*Add Subjects</label>
+                                                            <label class="bmd-label-floating">*Add Subjects (Please press enter to confirm subjects)</label>
                                                             <div class="form-group subject-wrapper">
                                                                 <input name="subjects" type="text" class="form-control"
                                                                     id="subjects"
@@ -177,7 +177,7 @@
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="bmd-label-floating">Add tags</label>
+                                                                <label class="bmd-label-floating">Add tags (Please press enter to confirm tags)</label>
                                                                 <input name="tags" type="text" class="form-control"
                                                                     id="tagSearch" placeholder="Search and enter tags" />
                                                             </div>
@@ -376,27 +376,32 @@
             var rate_value = $('#id_rate').val();
             var bio_value = $('#id_bio').val();
             var transcript_value = $('#id_transcript').val();
+            var tag = $('#tagSearch').val();
+            const createSubjectEvent = $.Event("tokenfield:edittoken");
+            $("#subjects").trigger(createSubjectEvent);
 
             if (sub_value==="") {
-                $(".subject-wrapper").addClass('errorClass')
+                $(".subject-wrapper").addClass('errorClass');
+                document.getElementById("subjects-tokenfield").setCustomValidity("Please enter valid subjects and press enter.");
                 event.preventDefault();
             }
             if (rate_value==="") {
-                $("#id_rate").addClass('errorClass')
+                $("#id_rate").addClass('errorClass');
                 event.preventDefault();
             }
 
             if (!bio_value) {
-                $("#id_bio").addClass('errorClass')
+                $("#id_bio").addClass('errorClass');
                 event.preventDefault();
             }
 
             if (transcript_value==="") {
-                $("#id_transcript").addClass('errorClass')
+                $("#id_transcript").addClass('errorClass');
                 event.preventDefault();
             }
             
             if(sub_value && rate_value && bio_value && transcript_value) {
+                console.log('123');
                 var formData = new FormData(this);
                 $('#rqstVerification').attr("disabled", true);
                 $.ajax({
@@ -409,6 +414,7 @@
                     data: formData,
                     success: function (data) {
                         if (data.status == 200) {
+                            console.log('success!');
                             $(".init-get-verify").html('<p>Your Profile is under review, you will be notified once verification is complete.</p>')
                             $("#tutorProfileModal").modal('hide');
                             $('#tutorOfferProfile')[0].reset();
@@ -454,23 +460,23 @@
                 source: tagSourceDataObj,
                 delay: 100
             },
+            delimiter: ',',
             showAutocompleteOnFocus: true
         });
 
         $("#tagSearch").on("tokenfield:createtoken", function (event) {
             var existingTokens = $(this).tokenfield("getTokens");
             var exists = true;
-
             //PREVENT DUPLICATION
             $.each(existingTokens, function (index, token) {
                 if (token.value === event.attrs.value) event.preventDefault();
             });
 
             //ALLOW ONLY TOKENS FROM SOURCE
-            $.each(tagSourceDataObj, function (index, token) {
-                if (token.value !== event.attrs.value) exists = false;
-            });
-            if (exists === true) event.preventDefault();
+            // $.each(tagSourceDataObj, function (index, token) {
+            //     if (token.value !== event.attrs.value) exists = false;
+            // });
+            // if (exists === true) event.preventDefault();
         });
         // -----------------------------------------------------
 
@@ -488,6 +494,7 @@
                 source: subjectSourceDataObj,
                 delay: 100
             },
+            delimiter: ',',
             showAutocompleteOnFocus: true
         });
 
@@ -501,11 +508,12 @@
             });
 
             //ALLOW ONLY TOKENS FROM SOURCE
-            $.each(subjectSourceDataObj, function (index, token) {
-                if (token.value === event.attrs.value) exists = false;
-            });
-            if (exists === true) event.preventDefault();
+            // $.each(subjectSourceDataObj, function (index, token) {
+            //     if (token.value === event.attrs.value) exists = false;
+            // });
+            // if (exists === true) event.preventDefault();
         });
+
         // -----------------------------------------------------
 
     });
