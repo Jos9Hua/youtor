@@ -59,8 +59,8 @@ class UserProfile(models.Model):
 
 class Subject(models.Model):
     subject_name = models.CharField(max_length=100, blank=True)
-    subject_code = models.CharField(max_length=20, blank=True)
-    course_number = models.CharField(max_length=20, blank=True)
+    # subject_code = models.CharField(max_length=20, blank=True)
+    # course_number = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.subject_name

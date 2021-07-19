@@ -427,6 +427,8 @@ def remove_subs_tags(request):
 def create_tutor_profile(request):
     context_dict = {}
     if request.method == 'POST' and request.FILES:
+        print('get.')
+        print(request)
         subject = request.POST.get('subjects', None).split(',')
         tutor_bio = request.POST.get('bio', None)
         offer_tags = request.POST.get('tags', None).split(',')
@@ -452,8 +454,16 @@ def create_tutor_profile(request):
                     if len(subject) != 0:
                         for sub in subject:
                             print(sub)
-                            subj_to_add = Subject.objects.get(subject_name=sub.strip())
-                            tutor_profile_instance.subject.add(subj_to_add)
+                            # subj_to_add = Subject.objects.get(subject_name=sub.strip())
+                            # if (not subj_to_add):
+                            try:
+                                subj_to_add = Subject.objects.get(subject_name=sub.strip())
+                                tutor_profile_instance.subject.add(subj_to_add)
+                            except Exception as s:
+                                s = Subject.objects.create(subject_name = sub)
+                                tutor_profile_instance.subject.add(s)
+
+                            # tutor_profile_instance.subject.add(subj_to_add)
 
                         tutor_offer = TutorOffers.objects.create(
                             user_id=tutor_profile_instance.user_id,
