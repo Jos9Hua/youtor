@@ -1,0 +1,447 @@
+{% extends './dashboard_base.html' %} {% load static %} {% load youtor_utils %}
+{% block include_static_cssblock1 %}
+<link
+  rel="stylesheet"
+  href="{% static 'assets/css/material-dashboard.css' %}"
+/>
+<link href="{% static 'assets/demo/demo.css' %}" rel="stylesheet" />
+<link
+  rel="stylesheet"
+  href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.css"
+/>
+<link
+  href="{% static 'css/bootstrap-table-expandable.css' %}"
+  rel="stylesheet"
+/>
+<!-- <style>
+    .searchbar {
+        margin-bottom: auto;
+        margin-top: auto;
+        height: 60px;
+        background-color: #fcfcfc;
+        border-radius: 30px;
+        padding: 10px;
+    }.navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+}
+	.navbar .collapse .navbar-nav .nav-item .nav-link {
+		font-size: 16px;
+		font-weight: 600;
+		color: #de830d;
+		padding: 4px 8px;
+		letter-spacing: 0.3px;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+		text-transform: capitalize;
+	}
+
+	.navbar.fixed-top {
+		margin-bottom: 0;
+  }
+    .search_input {
+        color: rgb(0, 0, 0);
+        border: 0;
+        outline: 0;
+        background: none;
+        width: 97%;
+        line-height: 40px;
+        padding: 0 10px;
+        caret-color: red;
+    }
+
+    .modal-content .card.card-signup.card-plain.mt-0 {
+        margin-bottom: 0 !important;
+    }
+
+    .searchbar:hover>.search_icon {
+        background: white;
+        color: #e74c3c;
+    }
+
+    .ui-autocomplete {
+        z-index: 9999;
+    }
+
+    .modal .col-md-12,
+    .modal .col-md-8 {
+        margin-bottom: 15px;
+    }
+
+    .modal button.close {
+        right: 10px;
+        position: absolute;
+        top: 5px;
+        z-index: 999;
+    }
+    .errorClass{
+        border : 1px solid #de830d;
+        border-radius: 4px;
+    }
+
+    div#wait {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99;
+        background-color: rgba(255,255,255,.6) !important;
+    }
+
+    .modal.show .modal-dialog .modal-content {
+        position: relative;
+    }
+
+    div#wait img {
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    div#tutorProfileModal.wait #wait {
+        display: block !important;
+    }
+</style> -->
+
+{% endblock %} {% block dashboard_main_content %}
+<style>
+  .with-bar {
+    border-right: 2px solid #eee;
+  }
+  .card-profile .card-avatar + .card-body {
+    margin-top: 40px;
+  }
+</style>
+
+<style>
+  @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+  fieldset,
+  label {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 1.5em;
+    margin: 0px;
+  }
+
+  /****** Style Star Rating Widget *****/
+
+  .rating {
+    border: none;
+    float: left;
+  }
+
+  .rating > input {
+    display: none;
+  }
+  .rating > label:before {
+    margin: 4px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
+  }
+
+  .rating > .half:before {
+    content: "\f089";
+    position: absolute;
+  }
+
+  .rating > label {
+    color: #ddd;
+    float: right;
+  }
+
+  /***** CSS Magic to Highlight Stars on Hover *****/
+
+  .rating > input:checked ~ label, /* show gold star when clicked */
+.rating:not(:checked) > label:hover, /* hover current star */
+.rating:not(:checked) > label:hover ~ label {
+    color: #ffd700;
+  } /* hover previous stars in list */
+
+  .rating > input:checked + label:hover, /* hover current star when changing rating */
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+.rating > input:checked ~ label:hover ~ label {
+    color: #ffed85;
+  }
+</style>
+<style>
+  .table tr th,
+  .table tr td {
+    text-align: center;
+  }
+  .navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+  }
+</style>
+
+<div class="container mt-5">
+  <h2 class="text-center">Past Bookings</h2>
+  <table class="booking table table-hover table-expandable table-striped">
+    <thead class="table-head thead-youtor">
+      <tr>
+        <th>Profile</th>
+        <th>Student Name</th>
+        <th>Course</th>
+        <th>Price</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if past_bookings %} {% for up in past_bookings %}
+      <tr>
+        <td class="text-center">
+          <img
+            src="{% static 'img/default-user.png' %}"
+            width="40"
+            height="40"
+            class="d-inline-block align-top"
+            alt=""
+          />
+        </td>
+        <td>{{up.student.first_name}} {{up.student.last_name}}</td>
+        <td>{{up.student.major}}</td>
+        <td>$ {{up.total_session_amount}}</td>
+        <td>{{up.start_time}}</td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <h4>Session Details</h4>
+          <ul>
+            <li>Session Details will be shown here</li>
+          </ul>
+          {% if up.tution_session_status == 1 %}
+          <button
+            type="button"
+            class="userreview btn btn-success"
+            disabled
+            data-id="{{ up.id }}"
+            data-toggle="modal"
+            data-target="#ReviewModalCenter"
+          >
+            Completed
+          </button>
+          {% else %}
+          <button
+            type="button"
+            class="userreview btn btn-success"
+            data-id="{{ up.id }}"
+            data-toggle="modal"
+            data-target="#ReviewModalCenter"
+          >
+            Complete
+          </button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %} {% else %}
+      <tr>
+        <td colspan="5">
+          No data available. Bookings for your past tutions will be listed here.
+        </td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal review-modal" id="ReviewModalCenter">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">User Review</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <!-- Modal body -->
+      <form method="POST" action="{% url 'UserReview' %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="eventId" id="eventId" />
+          <table class="cool-table">
+            <tr>
+              <label>Rate</label>
+              <td class="text-center">
+                {% csrf_token %}
+                <div class="rating" id="{{tutor_details.id}}">
+                  <input
+                    type="radio"
+                    id="star5_{{tutor_details.id}}"
+                    name="rating"
+                    value="5"
+                    class="star"
+                  />
+                  <label
+                    class="full"
+                    for="star5_{{tutor_details.id}}"
+                    title="5"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star4half_{{tutor_details.id}}"
+                    name="rating"
+                    value="4.5"
+                    class="star"
+                  />
+                  <label
+                    class="half"
+                    for="star4half_{{tutor_details.id}}"
+                    title="4.5"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star4_{{tutor_details.id}}"
+                    name="rating"
+                    value="4"
+                    class="star"
+                  />
+                  <label
+                    class="full"
+                    for="star4_{{tutor_details.id}}"
+                    title="4"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star3half_{{tutor_details.id}}"
+                    name="rating"
+                    value="3.5"
+                    class="star"
+                  />
+                  <label
+                    class="half"
+                    for="star3half_{{tutor_details.id}}"
+                    title="3.5"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star3_{{tutor_details.id}}"
+                    name="rating"
+                    value="3"
+                    class="star"
+                  />
+                  <label
+                    class="full"
+                    for="star3_{{tutor_details.id}}"
+                    title="3"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star2half_{{tutor_details.id}}"
+                    name="rating"
+                    value="2.5"
+                    class="star"
+                  />
+                  <label
+                    class="half"
+                    for="star2half_{{tutor_details.id}}"
+                    title="2.5"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star2_{{tutor_details.id}}"
+                    name="rating"
+                    value="2"
+                    class="star"
+                  />
+                  <label
+                    class="full"
+                    for="star2_{{tutor_details.id}}"
+                    title="2"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star1half_{{tutor_details.id}}"
+                    name="rating"
+                    value="1.5"
+                    class="star"
+                  />
+                  <label
+                    class="half"
+                    for="star1half_{{tutor_details.id}}"
+                    title="1.5"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="star1_{{tutor_details.id}}"
+                    name="rating"
+                    value="1"
+                    class="star"
+                  />
+                  <label
+                    class="full"
+                    for="star1_{{tutor_details.id}}"
+                    title="1"
+                  ></label>
+
+                  <input
+                    type="radio"
+                    id="starhalf_{{tutor_details.id}}"
+                    name="rating"
+                    value="0.5"
+                    class="star"
+                  />
+                  <label
+                    class="half"
+                    for="starhalf_{{tutor_details.id}}"
+                    title="0"
+                  ></label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Write Review</label>
+                <input type="text" class="form-control" name="txt_review" />
+              </td>
+            </tr>
+          </table>
+        </div>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script>
+  $(".userreview").click(function (e) {
+    e.preventDefault();
+    var student_id;
+    student_id = $(this).attr("data-id");
+    $(".modal-body #eventId").val(student_id);
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementsByClassName("sdm_past")[0].classList.add("active");
+  });
+</script>
+
+{% endblock %}

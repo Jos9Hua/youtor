@@ -119,9 +119,74 @@
                 </div>
             {% elif tutor_offer.status == 1 %}
                 <div class="row container verified">
-                    <p>
-                        {% include "youtor_app/booking_1.html" %}
-                    </p>
+                    <div class="container pt-3">
+                        <div class="row mt-5">
+                            <div class="col-md-3">
+                                <div class="card">
+                                    {% get_profile tutor_offer as tutor_details %}
+                                    <div class="card-body">
+                                        <center class="m-t-30">
+                                            <div class="card-avatar" style="min-height: 130px; min-width: 130px;">    
+                                                {% if tutor_details.profile_img %}
+                                                    <img class="img" height="130" width="130" src="{{ tutor_details.profile_img.url }}" />
+                                                {% else %}
+                                                    <img class="img" height="130" width="130" src="{% static 'img/default-user.png' %}" />
+                                                {% endif %}
+                                            </div>
+                                            <h4 class="card-title m-t-10">{{ tutor_details.name }}</h4>
+                                            <div class="row text-center justify-content-md-center">
+                                                <div class="col-6">
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star-half-empty"></i>
+                                                </div>
+                                                <div class="col-4">
+                                                    <i class="fa fa-dollar"></i>
+                                                    <font class="font-medium">{{ tutor_offer.rate }}</font>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <hr>
+                                            </div>
+                                        </center>
+                                        <small class="text-muted">Offer Description</small>
+                                        <h6 class="card-subtitle mt-1">{{ tutor_offer.bio }}</h6>
+                                    </div>
+                                    <div>
+                                        <hr>
+                                    </div>
+                                    <div class="card-body">
+                                        <small class="text-muted p-t-30 db">Subjects </small>
+                                        <h6>
+                                        {% for sub in tutor_profile.subject.all %}
+                                            {{ sub }}
+                                        {% endfor %}
+                                        </h6>
+                                        <small class="text-muted p-t-30 db">Tags</small><br />
+                                        {% for tag in tutor_offer.tags.all %}
+                                            <button class="btn-secondary m-1">#{{ tag }}</button>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="border-sk">
+                                        <p class="ascc13123"><span class="ascc badge-success"></span>Green areas are available time slots, you can select your preffered time by selecting and dragging on green areas.</p>
+                                        <p class="ascc13123"><span class="ascc badge-danger"></span>Red areas are time slots which are already boooked for this tutor, you can select any other available timeslots on green areas.</p>
+                                        <p class="ascc13123"><span class="ascc badge-warning"></span>You can select your slot upon available time slots by selecting or dragging for larger time slot. It is displayed in blue.</p>
+                                    </div>
+                                    <div>
+                                    <div class="card-body">
+                                        {% include 'youtor_app/tutor_sessions.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             {% elif tutor_offer.status == 0 %}
                 <div class="row container init-under-review">

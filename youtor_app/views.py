@@ -508,6 +508,68 @@ def offer_scheduling(request):
             available_slots_list = []
             for slot in offer_slot_list:
                 print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
+                if slot.start_recurr:
+                    available_slots_list.append({
+                        'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+                        'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+                        'id': slot.id,
+                        'day': slot.day,
+                        'start_recurr': slot.start_recurr.strftime("%Y-%m-%dT%H:%M"),
+                        'end_recurr': slot.end_recurr.strftime("%Y-%m-%dT%H:%M")
+                    })
+                else:
+                    available_slots_list.append({
+                        'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+                        'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+                        'id': slot.id,
+                        'day': slot.day
+                    })
+
+    except TutorOffers.DoesNotExist as e:
+        tutor_offer = None
+        available_slots_list = None
+        print("Exception Occured :", e)
+
+
+    # fetch booked slots on available slots if any
+    try:
+        booked_slots = TutionSlotBooking.objects.filter(tutor_id=request.user.id, start_time__gt=timezone.now())
+
+        booked_slots_list = []
+        for slot in booked_slots:
+            print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
+            booked_slots_list.append({
+                'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+                'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+                'id': slot.id
+            })
+    except Exception as e:
+        booked_slots_list = None
+        print("Exception Occured in fetching booked slots:", e)
+
+    # delete past slots
+
+    TutorOfferSlots.objects.filter(start_recurr__isnull=True).filter(start_time__lt=timezone.now()).delete()
+    TutorOfferSlots.objects.filter(end_recurr__lt=timezone.now()).delete()
+    # TutionSlotBooking.objects.filter(start_time__lt=timezone.now()).delete()
+
+    context_dict['tutor_offer'] = tutor_offer
+    context_dict['booked_slots'] = booked_slots_list
+    context_dict['offer_slot_list'] = available_slots_list
+    return render(request, 'youtor_app/slot_scheduling.html', context_dict)
+
+@login_required
+def upcoming_bookings(request):
+    context_dict = {}
+
+    try:
+        tutor_offer = TutorOffers.objects.get(user_id=request.user.id)
+        if tutor_offer:
+            offer_slot_list = TutorOfferSlots.objects.filter(tutor_offers_id=tutor_offer.id)
+
+            available_slots_list = []
+            for slot in offer_slot_list:
+                print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
                 available_slots_list.append({
                     'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
                     'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
@@ -544,12 +606,99 @@ def offer_scheduling(request):
     context_dict['tutor_offer'] = tutor_offer
     context_dict['booked_slots'] = booked_slots_list
     context_dict['offer_slot_list'] = available_slots_list
-    return render(request, 'youtor_app/slot_scheduling.html', context_dict)
+    return render(request, 'youtor_app/booking_upcoming.html', context_dict)
+
+@login_required
+def past_bookings(request):
+    context_dict = {}
+
+    try:
+        tutor_offer = TutorOffers.objects.get(user_id=request.user.id)
+        if tutor_offer:
+            offer_slot_list = TutorOfferSlots.objects.filter(tutor_offers_id=tutor_offer.id)
+
+            available_slots_list = []
+            for slot in offer_slot_list:
+                print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
+                available_slots_list.append({
+                    'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+                    'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+                    'id': slot.id
+                })
+
+    except TutorOffers.DoesNotExist as e:
+        tutor_offer = None
+        available_slots_list = None
+        print("Exception Occured :", e)
+
+
+    # fetch booked slots on available slots if any
+    try:
+        booked_slots = TutionSlotBooking.objects.filter(tutor_id=request.user.id, start_time__gt=timezone.now())
+
+        booked_slots_list = []
+        for slot in booked_slots:
+            print("newTime:",slot.start_time.strftime("%Y-%m-%dT%H:%M"))
+            booked_slots_list.append({
+                'start_time':slot.start_time.strftime("%Y-%m-%dT%H:%M"),
+                'end_time': slot.end_time.strftime("%Y-%m-%dT%H:%M"),
+                'id': slot.id
+            })
+    except Exception as e:
+        booked_slots_list = None
+        print("Exception Occured in fetching booked slots:", e)
+
+    # delete past slots
+
+    TutorOfferSlots.objects.filter(start_time__lt=timezone.now()).delete()
+    # TutionSlotBooking.objects.filter(start_time__lt=timezone.now()).delete()
+
+    context_dict['tutor_offer'] = tutor_offer
+    context_dict['booked_slots'] = booked_slots_list
+    context_dict['offer_slot_list'] = available_slots_list
+    return render(request, 'youtor_app/booking_past.html', context_dict)
 
 
 @login_required
 def create_event(request):
     if request.method == 'POST':
+        is_recur = request.POST.get('recur')
+        print(request.POST)
+        if is_recur == 'true':
+            start_time = request.POST.get('start_time')
+            end_time = request.POST.get('end_time')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date')
+            day_of_week = request.POST.get('day_of_week')
+            offer_id = request.POST.get('offer_id')
+            time_format = '%H:%M'
+            date_format = '%Y-%m-%d'
+            start_time = dt.datetime.strptime(start_time, time_format)
+            end_time = dt.datetime.strptime(end_time, time_format)
+            start_date = dt.datetime.strptime(start_date, date_format)
+            end_date = dt.datetime.strptime(end_date, date_format)
+            aware_start_time = pytz.utc.localize(start_time)
+            aware_end_time = pytz.utc.localize(end_time)
+            aware_start_date = pytz.utc.localize(start_date)
+            aware_end_date = pytz.utc.localize(end_date)
+            try:
+                new_slot = TutorOfferSlots.objects.create(
+                    tutor_offers_id = offer_id,
+                    day = day_of_week,
+                    end_time = aware_end_time, 
+                    start_time = aware_start_time,
+                    start_recurr = aware_start_date,
+                    end_recurr = aware_end_date
+                )
+                print('here')
+                new_slot = {'start_time':new_slot.start_time, 'end_time':new_slot.end_time, 'id':new_slot.id}
+
+                return redirect('/schedule')
+            except Exception as err:
+                print("\n\nException Occured: ", err)
+                return JsonResponse({'status': 500, 'message': 'error', 'success': False})
+
+
 
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
@@ -557,6 +706,7 @@ def create_event(request):
         offer_slot_id = request.POST.get('slot_id')
         day = request.POST.get('day_of_week')
         is_created = request.POST.get('created')
+        
 
         date_format = '%a, %d %b %Y %H:%M:%S %Z'
         unaware_start_time = dt.datetime.strptime(start_time, date_format)
@@ -567,6 +717,7 @@ def create_event(request):
 
         print("offer_slot_id:", offer_slot_id)
         print("is_created:", is_created)
+        print(request.POST)
         try:
             if offer_slot_id and is_created == 'false':
                 new_slot = TutorOfferSlots.objects.filter(id=offer_slot_id).update(

@@ -23,6 +23,8 @@ urlpatterns = [
     path('remove_subs_tags', views.remove_subs_tags, name='remove_subs_tags'),
 
     path('schedule', views.offer_scheduling, name='schedule'),
+    path('upcoming_bookings', views.upcoming_bookings, name='upcoming_bookings'),
+    path('past_bookings', views.past_bookings, name='past_bookings'),
     path('create_slots', views.create_event, name='create_slot'),
     path('delete_slots', views.delete_events, name='delete_slots'),
     

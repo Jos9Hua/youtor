@@ -1,34 +1,246 @@
-{% extends './dashboard_base.html' %}
-{% load static %}
-
+{% extends './dashboard_base.html' %} {% load static %} {% load youtor_utils %}
 {% block include_static_cssblock1 %}
-<link rel="stylesheet" href="{% static 'assets/css/material-dashboard.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'css/slot_schedule.css' %}" />
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'css/slot_schedule.css' %}"
+/>
 <link rel="stylesheet" href="{% static 'vendors/core/main.min.css' %}" />
 <link rel="stylesheet" href="{% static 'vendors/daygrid/main.min.css' %}" />
 <link rel="stylesheet" href="{% static 'vendors/timegrid/main.min.css' %}" />
-{% endblock %}
-{% block dashboard_main_content %}
+<link
+  rel="stylesheet"
+  href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"
+/>
+<link
+  rel="stylesheet"
+  href="{% static 'assets/css/material-dashboard.css' %}"
+/>
+<link href="fullcalendar/main.css" rel="stylesheet" />
+<style>
+  .searchbar {
+    margin-bottom: auto;
+    margin-top: auto;
+    height: 60px;
+    background-color: #fcfcfc;
+    border-radius: 30px;
+    padding: 10px;
+  }
+  .navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+  }
+  .navbar .collapse .navbar-nav .nav-item .nav-link {
+    font-size: 16px;
+    font-weight: 600;
+    color: #de830d;
+    padding: 4px 8px;
+    letter-spacing: 0.3px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    text-transform: capitalize;
+  }
+
+  .navbar.fixed-top {
+    margin-bottom: 0;
+  }
+  .search_input {
+    color: rgb(0, 0, 0);
+    border: 0;
+    outline: 0;
+    background: none;
+    width: 97%;
+    line-height: 40px;
+    padding: 0 10px;
+    caret-color: red;
+  }
+
+  .modal-content .card.card-signup.card-plain.mt-0 {
+    margin-bottom: 0 !important;
+  }
+
+  .searchbar:hover > .search_icon {
+    background: white;
+    color: #e74c3c;
+  }
+
+  .ui-autocomplete {
+    z-index: 9999;
+  }
+
+  .modal .col-md-12,
+  .modal .col-md-8 {
+    margin-bottom: 15px;
+  }
+
+  .modal button.close {
+    right: 10px;
+    position: absolute;
+    top: 5px;
+    z-index: 999;
+  }
+  .errorClass {
+    border: 1px solid #de830d;
+    border-radius: 4px;
+  }
+
+  div#wait {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    background-color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .modal.show .modal-dialog .modal-content {
+    position: relative;
+  }
+
+  div#wait img {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  div#tutorProfileModal.wait #wait {
+    display: block !important;
+  }
+</style>
+{% endblock %} {% block dashboard_main_content %}
+<style>
+  .with-bar {
+    border-right: 2px solid #eee;
+  }
+  .card-profile .card-avatar + .card-body {
+    margin-top: 40px;
+  }
+</style>
+
+<style>
+  .table tr th,
+  .table tr td {
+    text-align: center;
+  }
+  .navbar .navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #de830d;
+    color: #fff;
+  }
+</style>
+<style>
+  .modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
 
 <div class="content dashboard">
-    <div class="container-fluid slot-schedule">
-        {% if tutor_offer.status == 1 %}
-            <div id='calendar-container'>
-                <div id='calendar'></div>
-            </div>
-        {% elif tutor_offer.status != 1 %}
-            <div>
-                <p>
-                    You profile is not verified yet. Your profile must be verified before you can start scheduling your tution sessions.
-                </p>
-            </div>
-        {% endif %}
+  <div class="container-fluid slot-schedule">
+    {% if tutor_offer.status == 1 %}
+    <div id="calendar-container">
+      <div id="calendar"></div>
     </div>
+    <div
+      id="createEventModal"
+      class="modal"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create a recurring event</h5>
+              </div>
+              <div class="modal-body">
+                <form method="post" action="{% url 'create_slot' %}">
+                    <div>
+                        <label for="day_of_week">Day of Week</label>
+                        <select id="day_of_week" name="day_of_week" required>
+                            <option value=0>Sunday</option>
+                            <option value=1>Monday</option>
+                            <option value=2>Tuesday</option>
+                            <option value=3>Wednesday</option>
+                            <option value=4>Thursday</option>
+                            <option value=5>Friday</option>
+                            <option value=6>Saturday</option>
+                        </select>
+                    </div>
+                    <div>
+                        <lable for="start_time">Start Time</lable>
+                        <input id="start_time" name="start_time" type="time" required>
+                    </div>
+                    <div>
+                        <lable for="end_time">End Time</lable>
+                        <input id="end_time" name="end_time" type="time" required>
+                    </div>
+                    <div>
+                        <lable for="start_date">Recur Start Date</lable>
+                        <input id="start_date" name="start_date" type="date" max="2100-01-01" required>
+                    </div>
+                    <div>
+                        <lable for="end_date">Recur End Date</lable>
+                        <input id="end_date" name="end_date" type="date" max="2100-01-01" required>
+                    </div>
+                    <input type="hidden" name='csrfmiddlewaretoken' value='{{ csrf_token }}'>
+                    <input type="hidden" name='recur' value="true">
+                    <input type="hidden" name='offer_id' value="{{ tutor_offer.id }}">
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                
+              </div>
+            </div>
+          </div>
+    </div>
+    {% elif tutor_offer.status != 1 %}
+    <div>
+      <p>
+        You profile is not verified yet. Your profile must be verified before
+        you can start scheduling your tution sessions.
+      </p>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
-{% endblock %}
-
-{% block include_static_jsblock1 %}
+{% endblock %} {% block include_static_jsblock1 %}
 <script src="{% static 'vendors/core/main.min.js' %}"></script>
 <script src="{% static 'vendors/interaction/main.min.js' %}"></script>
 <script src="{% static 'vendors/daygrid/main.min.js' %}"></script>
@@ -36,6 +248,49 @@
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-timezone-data.min.js' %}"></script>
 <script>
+  function closeModal() {
+      $('#createEventModal').modal('hide');
+  }
+
+  function createRecurringEvent() {
+      const start_time = $('#start_time').val();
+      const end_time = $('#end_time').val();
+      const start_date = $('#start_date').val();
+      const end_date = $('#end_date').val();
+      const day_of_week = $('#day_of_week').val();
+
+      $.ajax({
+          type: 'POST',
+          url: "{% url 'create_slot' %}",
+          data: {
+              'created': true,
+              'recur': true,
+              'start_time': start_time,
+              'end_time': end_time,
+              'start_date': start_date,
+              'end_date': end_date,
+              'day_of_week': day_of_week,
+              'offer_id': {{ tutor_offer.id }},
+              // 'slot_id': info.id,
+              'csrfmiddlewaretoken': '{{ csrf_token }}'
+          },
+          success: function (data) {
+              console.log("--------->>>>",data);
+              calendar.addEvent({
+                  // id: data.new_slot.id,
+                  title: 'New Slot',
+                  start: data.new_slot.start_time.replace('Z', ''),
+                  end: data.new_slot.end_time.replace('Z', ''),
+                  offerId: {{ tutor_offer.id }},
+                  allDay: false,
+              })
+          },
+          error: function (xhr, status, e) {
+              alert(status, e);
+          }
+      });
+  }
+
     document.addEventListener('DOMContentLoaded', function () {
         {% if tutor_offer.status == 1 %}
 
@@ -51,8 +306,8 @@
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek' // ,timeGridDay'
-                },  
+                    right: 'dayGridMonth,timeGridWeek, button' // ,timeGridDay'
+                },
                 timeZone: 'UTC',
                 minTime: "7:00:00",
                 maxTime: "24:00:00",
@@ -71,11 +326,18 @@
                         eventOverlap: false,
                     }
                 },
+                customButtons: {
+                  button: {
+                      text: 'Create recurring event',
+                      click: buttonOnClick
+                  }
+                },
                 slotEventOverlap: false,
                 events: setSlotList(),
                 eventColor: '#4390eb',
                 timeFormat: 'H(:mm)t',
                 selectOverlap: function(eventObj) {
+                  console.log('selectoverlap');
                     return false;
                 },
                 select: function (eventObj) {
@@ -102,7 +364,7 @@
                     today_UTC = Date.UTC(tYr, tMnth, tDay, tHr, tMin, tSec)
 
                     // console.log("check:", check_UTC, "today: ", today_UTC, "toffset: ", tOffset)
-                    if(check_UTC >= today_UTC) {                        
+                    if(check_UTC >= today_UTC) {
                         render_new_event(eventObj);
                         calendar.unselect()
                     }
@@ -113,9 +375,11 @@
                     end: '2100-01-01' // hard coded goodness unfortunately
                 },
                 eventResize: function (eventObj) {
+                  console.log('resize');
                     update_event(eventObj);
                 },
                 eventDrop: function (info) {
+                  console.log('drop');
                     if (confirm("Are you sure about this change?")) {
                         update_event(info)
                     } else {
@@ -152,9 +416,45 @@
                         });
                     }
                 },
-                
+
             });
             calendar.render();
+
+            function buttonOnClick() {
+                // console.log("hello");
+                // events = [];
+                // {% for slot in offer_slot_list %}
+                //     events.push(
+                //         {
+                //             id: {{ slot.id }},
+                //             title: "Session " + "{{ forloop.counter }}",
+                //             startTime: "{{ slot.start_time }}".split('T')[1],
+                //             endTime: "{{ slot.end_time }}".split('T')[1],
+                //             daysOfWeek: [parseInt('{{ slot.day }}')],
+                //             offerId: {{ tutor_offer.id }},
+                //             // rendering: 'background',
+                //         }
+                //     );
+                //     calendar.getEventById(parseInt('{{slot.id}}')).remove();
+                // {% endfor %}
+
+                // {% for slot in booked_slots %}
+                //     events.push({
+                //         id: {{ slot.id }},
+                //         groupId: 'alreadyBooked',
+                //         title: "Booked",
+                //         start: "{{ slot.start_time }}",
+                //         end: "{{ slot.end_time }}",
+                //         // rendering: 'background',
+                //         backgroundColor: '#ff0000',
+                //         editable: false,
+                //     });
+                // {% endfor %}
+                    // events.forEach((e) => {
+                    //     calendar.addEvent(e);
+                    // })
+              $('#createEventModal').modal('show');
+            }
 
             function overLappingCheck(newEvent) {
                 console.log("OverLap CHECK",newEvent.start.getUTCDate());
@@ -201,7 +501,7 @@
                             'end_time': info.end.toUTCString(),
                             'day_of_week': info.start.getDay(),
                             'offer_id': {{ tutor_offer.id }},
-                            // 'slot_id': info.id,
+                            'slot_id': info.id,
                             'csrfmiddlewaretoken': '{{ csrf_token }}'
                         },
                         success: function (data) {
@@ -218,7 +518,7 @@
                         error: function (xhr, status, e) {
                             alert(status, e);
                         }
-                    });            
+                    });
             }
 
             function update_event(info) {
@@ -246,18 +546,38 @@
             }
 
             function setSlotList() {
+                console.log('setslotlist');
                 events = []
                 {% for slot in offer_slot_list %}
-                    events.push(
+                    if('{{slot.start_recurr}}' == 'None'){
+                      events.push(
                         {
-                            id: {{ slot.id }},
-                            title: "Session " + "{{ forloop.counter }}",
-                            start: "{{ slot.start_time }}",
-                            end: "{{ slot.end_time }}",
-                            offerId: {{ tutor_offer.id }},
-                            // rendering: 'background',
+                          id: {{ slot.id }},
+                          title: "Session " + "{{ forloop.counter }}",
+                          start: "{{ slot.start_time }}",
+                          end: "{{ slot.end_time }}",
+                          offerId: {{ tutor_offer.id }},
+                          // rendering: 'background',
                         }
-                    );
+                      );
+                    } else {
+                      const start_time = '{{slot.start_time}}'.split('T')[1];
+                      const end_time = '{{slot.end_time}}'.split('T')[1];
+                      const start_recurr = '{{slot.start_recurr}}'.split('T')[0];
+                      const end_recurr = '{{slot.end_recurr}}'.split('T')[0];
+                      events.push(
+                        {
+                          groupId: {{ slot.id }},
+                          daysOfWeek: [{{slot.day}}],
+                          title: "Session " + "{{ forloop.counter }}",
+                          startTime: start_time,
+                          endTime: end_time,
+                          startRecur: start_recurr,
+                          endRecur: end_recurr,
+                          offerId: {{tutor_offer.id}}
+                        }
+                      )
+                    }
                 {% endfor %}
 
                 {% for slot in booked_slots %}
@@ -272,7 +592,7 @@
                         editable: false,
                     });
                 {% endfor %}
-                
+
                 return events
             }
         {% endif %}
@@ -280,27 +600,39 @@
         $(".sdm2").addClass('active');
 });
 </script>
-<style>
-    .container-fluid.slot-schedule {
-        background: #fff;
-    }
+<script>
+    var modal = document.getElementById("createEventModal");
 
-.navbar .collapse .navbar-nav .nav-item .nav-link {
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+    };
+</script>
+<style>
+  .container-fluid.slot-schedule {
+    background: #fff;
+  }
+
+  .navbar .collapse .navbar-nav .nav-item .nav-link {
     font-size: 16px;
     font-weight: 600;
     color: #de830d;
     padding: 4px 8px;
     letter-spacing: 0.3px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     text-transform: capitalize;
-}
+  }
 
-.navbar.fixed-top {
+  .navbar.fixed-top {
     margin-bottom: 0;
-}
-.navbar .navbar-nav .nav-item.active .nav-link:hover {
+  }
+  .navbar .navbar-nav .nav-item.active .nav-link:hover {
     background-color: #de830d;
     color: #fff;
-}
-    </style>
+  }
+</style>
 {% endblock %}
